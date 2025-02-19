@@ -10,6 +10,10 @@ INSTRUCTIONS:
 
 ##BACKEND## 
 
+to run locally:
+
+1. docker compose --build up 
+
 adding a new site to support:
 
 
