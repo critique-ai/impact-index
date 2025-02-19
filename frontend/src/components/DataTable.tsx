@@ -3,17 +3,18 @@
 import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
-import { TopEntry } from '../types';
+import { TableEntry } from '@/types';
+import { Award, TrendingUp } from 'lucide-react';
 
 interface DataTableProps {
-  data: TopEntry[];
+  data: TableEntry[];
   siteId: string;
   metricName: string;
 }
 
 export function DataTable({ data, siteId, metricName }: DataTableProps) {
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof TopEntry;
+    key: keyof TableEntry;
     direction: 'asc' | 'desc';
   }>({ key: 'hIndex', direction: 'desc' });
 
@@ -27,7 +28,7 @@ export function DataTable({ data, siteId, metricName }: DataTableProps) {
     return 0;
   });
 
-  const toggleSort = (key: keyof TopEntry) => {
+  const toggleSort = (key: keyof TableEntry) => {
     setSortConfig(current => ({
       key,
       direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc',
@@ -35,47 +36,54 @@ export function DataTable({ data, siteId, metricName }: DataTableProps) {
   };
 
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-200">
-      <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 cursor-pointer" onClick={() => toggleSort('name')}>
-              <div className="flex items-center">
-                Name
-                <ArrowUpDown className="ml-2 h-4 w-4" />
+    <div className="space-y-2">
+      <div className="flex justify-end gap-4 mb-4">
+        <button
+          onClick={() => toggleSort('hIndex')}
+          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+        >
+          H-Index
+          <ArrowUpDown className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => toggleSort('totalMetrics')}
+          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+        >
+          {metricName}
+          <ArrowUpDown className="h-4 w-4" />
+        </button>
+      </div>
+
+      {sortedData.map((entry, index) => (
+        <Link
+          key={entry.id}
+          href={`/${siteId}/${entry.id}`}
+          className="group block"
+        >
+          <div className="flex items-center p-4 hover:bg-gray-700/50 rounded-lg transition-colors">
+            <div className="flex-shrink-0 w-12 text-2xl font-bold text-gray-500">
+              #{index + 1}
+            </div>
+            <div className="flex-grow">
+              <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+                {entry.name}
+              </h3>
+            </div>
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-yellow-500" />
+                <span className="text-white font-semibold">{entry.hIndex}</span>
               </div>
-            </th>
-            <th className="px-6 py-3 cursor-pointer" onClick={() => toggleSort('hIndex')}>
-              <div className="flex items-center">
-                H-Index
-                <ArrowUpDown className="ml-2 h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+                <span className="text-white font-semibold">
+                  {entry.totalMetrics.toLocaleString()} {metricName}
+                </span>
               </div>
-            </th>
-            <th className="px-6 py-3 cursor-pointer" onClick={() => toggleSort('totalMetrics')}>
-              <div className="flex items-center">
-                Total {metricName}
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedData.map((entry) => (
-            <tr key={entry.id} className="bg-white border-b hover:bg-gray-50">
-              <td className="px-6 py-4 font-medium text-gray-900">
-                <Link
-                  href={`/${siteId}/${entry.id}`}
-                  className="hover:text-blue-600 hover:underline"
-                >
-                  {entry.name}
-                </Link>
-              </td>
-              <td className="px-6 py-4">{entry.hIndex}</td>
-              <td className="px-6 py-4">{entry.totalMetrics.toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            </div>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }

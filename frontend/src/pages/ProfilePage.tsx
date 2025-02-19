@@ -1,9 +1,23 @@
-import { useParams, Link } from 'react-router-dom';
 import { dummyProfileResponse, dummySites } from '../lib/utils';
 import { Calendar, Award, BarChart3, ArrowLeft } from 'lucide-react';
-
-export function ProfilePage() {
-  const { siteId = '', accountId = '' } = useParams();
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+export default function ProfilePage() {
+  const params = useParams();
+  if (!params) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Site Not Found</h1>
+          <p className="text-gray-600 mb-8">
+            Sorry, we don't support this platform yet. Check back later!
+          </p>
+        </div>
+      </div>
+    );
+  }
+  const siteId = params.siteId as string;
+  const accountId = params.accountId as string;
   const site = dummySites.find(s => s.id === siteId);
 
   if (!site) {
@@ -15,7 +29,7 @@ export function ProfilePage() {
             Sorry, we don't support this platform yet. Check back later!
           </p>
           <Link
-            to="/"
+            href="/"
             className="inline-flex items-center text-blue-600 hover:text-blue-800"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -41,7 +55,7 @@ export function ProfilePage() {
               on {site.name}.
             </p>
             <Link
-              to={`/${siteId}`}
+              href={`/${siteId}`}
               className="inline-flex items-center text-blue-600 hover:text-blue-800"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -58,7 +72,7 @@ export function ProfilePage() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <Link
-            to={`/${siteId}`}
+            href={`/${siteId}`}
             className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

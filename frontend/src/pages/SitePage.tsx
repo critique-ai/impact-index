@@ -1,10 +1,25 @@
-import { useParams } from 'react-router-dom';
 import { DataTable } from '../components/DataTable';
 import { SearchBar } from '../components/SearchBar';
 import { dummyTopResponse, dummySites } from '../lib/utils';
+import { useParams } from 'next/navigation';
 
-export function SitePage() {
-  const { siteId = '' } = useParams();
+export default function SitePage() {
+  const params = useParams();
+  
+  if (!params?.siteId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Invalid Site</h1>
+          <p className="text-gray-600">
+            No site ID was provided.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const siteId = params.siteId as string;
   const site = dummySites.find(s => s.id === siteId);
   
   if (!site) {

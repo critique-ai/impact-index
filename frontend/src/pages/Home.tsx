@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { AnimatedTitle } from '../components/AnimatedTitle';
 import { dummySites } from '../lib/utils';
 import { ArrowRight } from 'lucide-react';
 
-export function Home() {
+export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4 py-16">
@@ -19,7 +19,7 @@ export function Home() {
             {dummySites.map((site) => (
               <Link
                 key={site.id}
-                to={`/${site.id}`}
+                href={`/${site.id}`}
                 className="block p-6 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-center">

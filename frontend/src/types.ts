@@ -7,6 +7,14 @@ export interface Site {
   metricName: string; // "upvotes", "views", etc.
 }
 
+export interface TableEntry {
+  id: string;
+  name: string;
+  hIndex: number;
+  totalMetrics: number;
+  profileUrl: string;
+}
+
 export interface TopEntry {
   id: string;
   name: string;
