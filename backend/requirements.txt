@@ -2,3 +2,9 @@ pydantic
 requests
 praw
 python-dotenv
+sqlalchemy
+asyncpg
+psycopg2-binary
+pytest
+fastapi
+uvicorn

@@ -1,0 +1,48 @@
+services:
+  backend:
+    env_file:
+      - ./backend/.env.local
+    image: critique-api-backend
+    build: 
+      context: ./backend/
+      dockerfile: backend.Dockerfile
+    ports:
+      - 8081:8080
+    environment:
+      PYTHONUNBUFFERED: 1  # This ensures Python output is sent straight to the container log
+    depends_on:
+      db:
+        condition: service_healthy
+      test:
+        condition: service_completed_successfully
+    restart: "no"  # Don't restart if tests fail
+
+  test:
+    build:
+      context: ./backend/
+      dockerfile: test.Dockerfile
+    env_file:
+      - ./backend/.env.local
+    environment:
+      PYTHONUNBUFFERED: 1
+      POSTGRES_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    env_file:
+      - ./backend/.env.local
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - impact-index-data:/var/lib/postgresql/data
+      - ./backend/db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+volumes:
+  impact-index-data:
