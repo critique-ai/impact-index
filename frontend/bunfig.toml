@@ -1,0 +1,13 @@
+[install]
+# Use exact versions for dependencies
+exact = true
+
+[install.cache]
+# Enable global cache
+dir = ".bun"
+disable = false
+
+[dev]
+# Development server configuration
+port = 3000
+hot = true 
