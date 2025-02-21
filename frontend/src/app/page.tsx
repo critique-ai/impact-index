@@ -7,8 +7,47 @@ import { RippleButton } from "@/components/magicui/ripple-button";
 import { useSites } from '@/components/SitesProvider';
 import { AuroraText } from '@/components/magicui/aurora-text';
 
+interface PreviewModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  url: string;
+}
+
+function PreviewModal({ isOpen, onClose, url }: PreviewModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+      <div className="bg-white rounded-lg w-[600px] h-[400px] shadow-2xl relative border border-gray-200">
+        <div className="absolute top-0 left-0 right-0 bg-gray-100 px-2 py-1 rounded-t-lg flex items-center">
+          <span className="text-sm text-gray-600 truncate flex-1">{url}</span>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+        <iframe 
+          src={url} 
+          className="w-full h-full pt-7 rounded-b-lg"
+          title="Preview"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const { sites } = useSites();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  const openPreview = (url: string) => {
+    setPreviewUrl(url);
+    setIsPreviewOpen(true);
+  };
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center text-center">
@@ -22,7 +61,10 @@ export default function Home() {
           </div>
 
           <p className="text-lg text-gray-700 mb-12 mt-4">
-            Check out the H-index breakdowns for various sites. (Fully Open Source btw.)
+            Calculating an <button 
+              onClick={() => openPreview('https://en.wikipedia.org/wiki/H-index#Calculation')}
+              className="text-blue-500 hover:text-blue-700 underline"
+            >H-index</button> of sorts for various sites on the web. (Fully Open Source btw.)
           </p>
 
           <div className="flex justify-center gap-4 mb-12">
@@ -53,6 +95,12 @@ export default function Home() {
             </div>
           </div>
       </div>
+
+      <PreviewModal 
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        url={previewUrl}
+      />
     </div>
   );
 }

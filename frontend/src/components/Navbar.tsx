@@ -114,7 +114,7 @@ export function Navbar() {
               className="flex items-center"
             >
               <GitBranch className="mr-2 h-4 w-4" />
-              <span>Star on GitHub</span>
+              <span>Code on GitHub</span>
             </a>
           </Button>
         </div>
