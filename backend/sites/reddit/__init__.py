@@ -10,7 +10,11 @@ from sites import SiteWorker
 
 class Reddit(SiteWorker):
     name = "reddit"
-
+    description = 'Reddit user H-index based on post and comment karma'
+    index_description = 'A user has an H-index of N if they have N posts or comments with at least N upvotes each'
+    entity_name = 'User'
+    metric_name = 'upvotes'
+    
     def __init__(self):
         super().__init__()
         self.reddit_client = praw.Reddit(

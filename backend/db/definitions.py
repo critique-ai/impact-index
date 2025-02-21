@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, text, Column, String, DateTime, UUID, ForeignKey, Integer, Float, Boolean, Enum
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
+
 import os 
 from datetime import datetime 
 import uuid 
@@ -7,13 +8,11 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-ASYNC_DATABASE_URL = f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT','5432')}/{os.getenv('POSTGRES_DB')}" #?sslmode=require
 
-DATABASE_URL = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT','5432')}/{os.getenv('POSTGRES_DB')}" #?sslmode=require
+DATABASE_URL = f"postgresql+psycopg2://{os.getenv('DB_URL')}" #
+
 # Set up the async database engine and session
-async_engine = create_async_engine(ASYNC_DATABASE_URL, echo=True, pool_size=10, max_overflow=20, pool_timeout=5, pool_recycle=1800,pool_pre_ping=True)
 engine = create_engine(DATABASE_URL, echo=True, pool_size=10, max_overflow=20, pool_timeout=5, pool_recycle=1800,pool_pre_ping=True)
-
 
 
 class ToDictMixin:
@@ -41,6 +40,5 @@ class EntityBase(Base,ToDictMixin):
     index = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     last_updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-
-
-#create a table in the sites schema for each site in backend/sites/__init__.py
+    total_metrics = Column(Integer, default=0)
+    url = Column(String, nullable=True)

@@ -10,12 +10,11 @@ services:
       - 8081:8080
     environment:
       PYTHONUNBUFFERED: 1  # This ensures Python output is sent straight to the container log
+    restart: "no"  # Don't restart if tests fail
+##the following portion of the file can be commented out if you want to run the backend without testing ## 
     depends_on:
-      db:
-        condition: service_healthy
       test:
         condition: service_completed_successfully
-    restart: "no"  # Don't restart if tests fail
 
   test:
     build:
@@ -25,24 +24,26 @@ services:
       - ./backend/.env.local
     environment:
       PYTHONUNBUFFERED: 1
-      POSTGRES_HOST: db
+      DB_URL: postgres:postgres@test_db:5432/postgres
     depends_on:
-      db:
+      test_db:
         condition: service_healthy
 
-  db:
-    env_file:
-      - ./backend/.env.local
+  test_db:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres #this password can be insecure because this dummy db is instantiated for testing purposes
+      POSTGRES_DB: postgres
+      POSTGRES_PORT: 5432
     image: postgres:14-alpine
     ports:
       - 5432:5432
     volumes:
-      - impact-index-data:/var/lib/postgresql/data
       - ./backend/db/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-volumes:
-  impact-index-data:
+    restart: "no"  # Don't restart when container stops
+

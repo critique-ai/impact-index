@@ -8,3 +8,6 @@ psycopg2-binary
 pytest
 fastapi
 uvicorn
+slowapi 
+redis
+rq

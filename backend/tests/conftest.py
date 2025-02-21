@@ -2,7 +2,7 @@ import pytest
 import os
 import sys
 from typing import List
-
+from utils import load_site_workers
 # Add the backend directory to Python path for imports
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(backend_dir)
@@ -33,3 +33,8 @@ def valid_mock_site_worker():
 @pytest.fixture
 def invalid_worker():
     return InvalidWorker 
+    
+@pytest.fixture(scope="session") 
+def site_workers():
+    """Initialize site_workers once for all tests."""
+    return load_site_workers()
