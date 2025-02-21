@@ -1,17 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { dummySites } from '@/lib/utils';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { AuroraText } from "@/components/magicui/aurora-text";
-import { WordRotate } from "@/components/magicui/word-rotate";
 import { MorphingText } from "@/components/magicui/morphing-text";
 import { RippleButton } from "@/components/magicui/ripple-button";
+import { useSites } from '@/components/SitesProvider';
 
 export default function Home() {
-
+  const { sites } = useSites();
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center text-center">
@@ -20,7 +16,7 @@ export default function Home() {
               The Impact Index of 
             </h1>
             <div className="flex justify-center w-full">
-              <MorphingText texts={dummySites.map(site => site.name)} />
+              <MorphingText texts={sites.map(site => site.name)} />
             </div>
           </div>
 
@@ -29,8 +25,8 @@ export default function Home() {
           </p>
 
           <div className="flex justify-center gap-4 mb-12">
-            {dummySites.map((site) => (
-              <Link href={`/${site.id}`} key={site.id}>
+            {sites.map((site) => (
+              <Link href={`/${site.name}`} key={site.name}>
                 <RippleButton rippleColor="#ADD8E6">
                   {site.name}
                 </RippleButton>

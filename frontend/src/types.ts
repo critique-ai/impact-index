@@ -1,33 +1,34 @@
 export interface Site {
-  id: string;
   name: string;
   description: string;
-  hIndexDescription: string;
-  entityName: string; // "User", "Channel", etc.
-  metricName: string; // "upvotes", "views", etc.
-  primaryColor: string;
-  secondaryColor: string;
+  index_description: string;
+  entity_name: string; // "User", "Channel", etc.
+  metric_name: string; // "upvotes", "views", etc.
+  primary_color: string;
+  secondary_color: string;
 }
 
-export interface TableEntry {
-  id: string;
-  name: string;
-  hIndex: number;
-  totalMetrics: number;
-  profileUrl: string;
+
+
+export interface Entity {
+  identifier: string;
+  index: number;
+  created_at: string;
+  last_updated_at: string;
+  total_metrics: number;
+  url: string;
 }
 
-export interface TopEntry {
-  id: string;
-  name: string;
-  hIndex: number;
-  totalMetrics: number;
-  profileUrl: string;
-}
+
 
 export interface TopResponse {
-  site: Site;
-  entries: TopEntry[];
+  entities: Entity[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_items: number;
+    total_pages: number;
+  }
 }
 
 export interface ContentItem {
@@ -39,12 +40,8 @@ export interface ContentItem {
 }
 
 export interface ProfileResponse {
-  site: Site;
-  profile: {
-    id: string;
-    name: string;
-    hIndex: number;
-    totalMetrics: number;
-    topContent: ContentItem[];
-  };
+  entity: Entity;
+  stats: {
+    percentile: number;
+  }
 }

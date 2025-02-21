@@ -2,21 +2,32 @@
 
 import { DataTable } from '@/components/DataTable';
 import { SearchBar } from '@/components/SearchBar';
-import { dummyTopResponse, dummySites } from '@/lib/utils';
-import { notFound } from 'next/navigation';
+import {  getTopResponse } from '@/lib/utils';
+import { notFound, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useSites } from '@/components/SitesProvider';
+import { useContext, useState, useEffect } from 'react';
+import type { Site, TopResponse } from '@/types';
 
-export default function SitePage({
-  params: { siteId },
-}: {
-  params: { siteId: string };
-}) {
-  const site = dummySites.find(s => s.id === siteId);
-  if (!site) notFound();
+export default function SitePage() {
+  const params = useParams();
+  const { sites } = useSites();
+  const currentSite = sites.find(site => params.siteId === site.name);
+  const [data, setData] = useState<TopResponse | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
 
-  const data = dummyTopResponse(siteId);
+  useEffect(() => {
+    getTopResponse(params.siteId as string, currentPage, perPage)
+      .then(response => setData(response));
+      console.log(data);
+  }, [params.siteId, currentPage, perPage]);
 
-  return (
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  return currentSite ? (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-16">
         <motion.div
@@ -25,28 +36,31 @@ export default function SitePage({
           transition={{ duration: 0.5 }}
         >
           <h1 className="text-4xl font-bold text-center mb-4">
-            {site.name} Rankings
+            {currentSite.name} Rankings
           </h1>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto text-lg">
-            {site.hIndexDescription}
+            {currentSite.index_description}
           </p>
 
           <div className="flex justify-center mb-12">
             <SearchBar
-              siteId={siteId}
-              placeholder={`Search for a ${site.entityName.toLowerCase()}...`}
+              siteId={params.siteId as string}
+              placeholder={`Search for a ${currentSite.entity_name.toLowerCase()}...`}
             />
           </div>
 
           <div className="rounded-xl shadow-xl p-6">
             <DataTable
-              data={data.entries}
-              siteId={siteId}
-              metricName={site.metricName}
+              data={data?.entities ?? []}
+              siteId={params.siteId as string}
+              metricName={currentSite.metric_name}
+              currentPage={currentPage}
+              totalPages={data?.pagination?.total_pages ?? 1}
+              onPageChange={handlePageChange}
             />
           </div>
         </motion.div>
       </div>
     </div>
-  );
+  ) : notFound();
 }

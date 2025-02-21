@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
 import './globals.css';
+import { SitesProvider } from '@/components/SitesProvider';
+import { getSites } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -10,16 +12,20 @@ export const metadata: Metadata = {
   description: 'Discover the impact and reach of content creators across different platforms through the lens of the H-index metric.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const sites = await getSites();
+
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <Navbar />
-        <main>{children}</main>
+        <SitesProvider initialSites={sites}>
+          <Navbar />
+          <main>{children}</main>
+        </SitesProvider>
       </body>
     </html>
   );

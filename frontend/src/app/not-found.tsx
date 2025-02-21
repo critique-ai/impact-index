@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Site Not Found</h1>
         <p className="text-gray-600 mb-8">
-          Sorry, we don't support this platform yet. Check back later!
+          Sorry, we don't support this platform/user. They may not exist, or we may not support this platform yet. Either way, Check back later!
         </p>
         <Link
           href="/"
