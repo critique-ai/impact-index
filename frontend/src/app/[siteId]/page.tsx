@@ -20,7 +20,6 @@ export default function SitePage() {
   useEffect(() => {
     getTopResponse(params.siteId as string, currentPage, perPage)
       .then(response => setData(response));
-      console.log(data);
   }, [params.siteId, currentPage, perPage]);
 
   const handlePageChange = (newPage: number) => {

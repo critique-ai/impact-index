@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MorphingText } from "@/components/magicui/morphing-text";
 import { RippleButton } from "@/components/magicui/ripple-button";
 import { useSites } from '@/components/SitesProvider';
+import { AuroraText } from '@/components/magicui/aurora-text';
 
 export default function Home() {
   const { sites } = useSites();
@@ -13,7 +14,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center text-center">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-4xl font-bold tracking-tighter md:text-5xl lg:text-7xl">
-              The Impact Index of 
+              The Impact index of
             </h1>
             <div className="flex justify-center w-full">
               <MorphingText texts={sites.map(site => site.name)} />

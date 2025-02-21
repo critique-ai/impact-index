@@ -18,7 +18,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const sites = await getSites();
-
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>

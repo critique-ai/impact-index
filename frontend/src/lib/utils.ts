@@ -14,8 +14,8 @@ export const getSites = async (): Promise<Site[]> => {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
     });
+
 
     if (!response.ok) {
       console.error('Failed to fetch sites:', response.status, response.statusText);
