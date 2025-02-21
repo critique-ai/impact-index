@@ -13,6 +13,12 @@ from sites.types import Entity, Record
 # Create a mock SiteWorker for testing
 class ValidMockSiteWorker(SiteWorker):
     name = "mock"
+    description = "Mock site worker for testing"
+    index_description = "Mock index description for testing"
+    entity_name = "Mock entity"
+    metric_name = "Mock metric"
+    primary_color = "bg-blue-500"
+    secondary_color = "bg-green-500"
     def __init__(self):
         super().__init__()
     
