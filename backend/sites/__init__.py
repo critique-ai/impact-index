@@ -8,8 +8,13 @@ from functools import lru_cache
 from dataclasses import dataclass
 
 @dataclass
-class EntityStats(ToDictMixin):
+class EntityStats:
     percentile: float
+
+    def to_dict(self,drop=[]):
+        return {
+            "percentile": self.percentile
+        }
 
 class SiteWorker(ABC):
     name: str  # Class attribute that must be defined by subclasses
