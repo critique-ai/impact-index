@@ -56,7 +56,7 @@ export default function Home() {
               The Impact index of
             </h1>
             <div className="flex justify-center w-full">
-              <MorphingText texts={sites.map(site => site.name)} />
+              <MorphingText texts={sites.map(site => site.name).concat(['everything'])} />
             </div>
           </div>
 
