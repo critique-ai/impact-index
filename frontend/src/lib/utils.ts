@@ -1,6 +1,6 @@
-import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Site, TopResponse, ProfileResponse } from '@/types';
+import { clsx, type ClassValue } from "clsx"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -16,7 +16,9 @@ export const dummySites: Site[] = [
     description: 'Reddit user H-index based on post and comment karma',
     hIndexDescription: 'A user has an H-index of N if they have N posts or comments with at least N upvotes each',
     entityName: 'User',
-    metricName: 'upvotes'
+    metricName: 'upvotes',
+    primaryColor: 'bg-red-500',
+    secondaryColor: 'black'
   },
   {
     id: 'youtube',
@@ -24,7 +26,9 @@ export const dummySites: Site[] = [
     description: 'YouTube channel H-index based on video views',
     hIndexDescription: 'A channel has an H-index of N if they have N videos with at least N thousand views each',
     entityName: 'Channel',
-    metricName: 'thousand views'
+    metricName: 'thousand views',
+    primaryColor: 'bg-red-500',
+    secondaryColor: 'white'
   }
 ];
 

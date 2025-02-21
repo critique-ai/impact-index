@@ -5,6 +5,8 @@ export interface Site {
   hIndexDescription: string;
   entityName: string; // "User", "Channel", etc.
   metricName: string; // "upvotes", "views", etc.
+  primaryColor: string;
+  secondaryColor: string;
 }
 
 export interface TableEntry {

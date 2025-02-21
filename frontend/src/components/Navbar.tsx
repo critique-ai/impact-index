@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Github } from 'lucide-react';
+import { GitBranch} from 'lucide-react';
 import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
 import { dummySites } from '@/lib/utils';
@@ -11,12 +11,12 @@ export function Navbar() {
   const currentSite = dummySites.find(site => pathname?.startsWith(`/${site.id}`));
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm">
+    <nav className="sticky top-0 z-50 w-full backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold text-white">
-              H-Index
+            <Link href="/" className="text-xl font-bold">
+              Impact Index
             </Link>
             {currentSite && (
               <div className="hidden md:flex items-center gap-6">
@@ -43,8 +43,8 @@ export function Navbar() {
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white"
             >
-              <Github className="mr-2 h-4 w-4" />
-              Star on GitHub
+              <GitBranch className="mr-2 h-4 w-4" />
+              Code on Github
             </a>
           </Button>
         </div>

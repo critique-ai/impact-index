@@ -24,7 +24,7 @@ export function SearchBar({ siteId, placeholder }: { siteId: string; placeholder
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg bg-gray-800 py-4 pl-12 pr-4 text-white placeholder-gray-400 border border-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+          className="w-full rounded-lg py-4 pl-12 pr-4 placeholder-gray-400 border focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
         />
       </div>
     </form>

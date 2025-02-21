@@ -40,14 +40,14 @@ export function DataTable({ data, siteId, metricName }: DataTableProps) {
       <div className="flex justify-end gap-4 mb-4">
         <button
           onClick={() => toggleSort('hIndex')}
-          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-sm text-gray-400  transition-colors"
         >
           H-Index
           <ArrowUpDown className="h-4 w-4" />
         </button>
         <button
           onClick={() => toggleSort('totalMetrics')}
-          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-sm text-gray-400  transition-colors"
         >
           {metricName}
           <ArrowUpDown className="h-4 w-4" />
@@ -65,18 +65,18 @@ export function DataTable({ data, siteId, metricName }: DataTableProps) {
               #{index + 1}
             </div>
             <div className="flex-grow">
-              <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+              <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors">
                 {entry.name}
               </h3>
             </div>
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-yellow-500" />
-                <span className="text-white font-semibold">{entry.hIndex}</span>
+                <span className=" font-semibold">{entry.hIndex}</span>
               </div>
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-500" />
-                <span className="text-white font-semibold">
+                <span className="font-semibold">
                   {entry.totalMetrics.toLocaleString()} {metricName}
                 </span>
               </div>
