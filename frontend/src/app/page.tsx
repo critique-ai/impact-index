@@ -113,7 +113,7 @@ export default function Home() {
             <div className="space-y-4">
               <details className="border-b border-gray-300 pb-4">
                 <summary className="cursor-pointer text-lg font-medium">What do you mean H-index on everything?</summary>
-                <p className="mt-2 text-gray-600">So basically H-index is a interesting metric that measures impact for researchers in academics. Like if someone came up with a one hit wonder, they'd have an H index of 1, in order to have a higher H index you have to have a continued string of useful stuff. It seemed like an interesting exercise to apply that to various sites since seems quite translatable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc.  </p>
+                <p className="mt-2 text-gray-600">So basically H-index is a interesting metric that measures impact for researchers in academics. Like if someone came up with a one hit wonder, they'd have an H index of 1, in order to have a higher H index you have to have a continued string of useful stuff. It seemed like an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc.  </p>
               </details>
               <details className="border-b border-gray-300 pb-4">
                 <summary className="cursor-pointer text-lg font-medium">Why did you make this?</summary>
