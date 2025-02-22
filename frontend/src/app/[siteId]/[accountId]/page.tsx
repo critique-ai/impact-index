@@ -44,7 +44,7 @@ export default function ProfilePage() {
               href={`/${currentSite.name}`}
               className="text-gray-400 transition-colors"
             >
-              ← Back to {currentSite.name} Rankings
+              ← Back to {currentSite.name} rankings
             </Link>
           </div>
           {loading ? (

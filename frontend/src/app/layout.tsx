@@ -4,7 +4,7 @@ import { Navbar } from '@/components/Navbar';
 import './globals.css';
 import { SitesProvider } from '@/components/SitesProvider';
 import { getSites } from '@/lib/utils';
-
+import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -21,10 +21,17 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <SitesProvider initialSites={sites}>
-          <Navbar />
-          <main>{children}</main>
-        </SitesProvider>
+      <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SitesProvider initialSites={sites}>
+            <Navbar />
+            <main>{children}</main>
+          </SitesProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

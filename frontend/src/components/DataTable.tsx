@@ -9,6 +9,7 @@ interface DataTableProps {
   data: Entity[];
   siteId: string;
   metricName: string;
+  EntityName: string;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -17,6 +18,7 @@ interface DataTableProps {
 export function DataTable({ 
   data, 
   siteId, 
+  EntityName,
   metricName, 
   currentPage, 
   totalPages, 
@@ -47,49 +49,59 @@ export function DataTable({
   return (
     <div>
       <div className="space-y-2">
-        <div className="flex justify-end gap-4 mb-4">
+        {/* Header Row */}
+        <div className="grid grid-cols-4 gap-4 mb-4 px-4">
+          <div className="w-12">
+            <span className="text-sm text-gray-400">#</span>
+          </div>
+          <button
+            onClick={() => toggleSort('identifier')}
+            className="flex items-center gap-2 text-sm text-gray-400 transition-colors"
+          >
+            {EntityName}
+            <ArrowUpDown className="h-4 w-4" />
+          </button>
           <button
             onClick={() => toggleSort('index')}
-            className="flex items-center gap-2 text-sm text-gray-400  transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-400 transition-colors justify-end"
           >
             H-Index
             <ArrowUpDown className="h-4 w-4" />
           </button>
           <button
             onClick={() => toggleSort('total_metrics')}
-            className="flex items-center gap-2 text-sm text-gray-400  transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-400 transition-colors justify-end"
           >
             {metricName}
             <ArrowUpDown className="h-4 w-4" />
           </button>
         </div>
 
+        {/* Data Rows */}
         {sortedData.map((entry, index) => (
           <Link
             key={entry.identifier}
             href={`/${siteId}/${entry.identifier}`}
             className="group block"
           >
-            <div className="flex items-center p-4 hover:bg-gray-700/50 rounded-lg transition-colors">
-              <div className="flex-shrink-0 w-12 text-2xl font-bold text-gray-500">
+            <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 rounded-lg transition-colors items-center">
+              <div className="w-12 text-2xl font-bold text-gray-500">
                 #{index + 1}
               </div>
-              <div className="flex-grow">
-                <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors">
+              <div className="min-w-0">
+                <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate">
                   {entry.identifier}
                 </h3>
               </div>
-              <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-yellow-500" />
-                  <span className=" font-semibold">{entry.index}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                  <span className="font-semibold">
-                    {entry.total_metrics.toLocaleString()} {metricName}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 justify-end">
+                <Award className="h-5 w-5 text-yellow-500" />
+                <span className="font-semibold">{entry.index}</span>
+              </div>
+              <div className="flex items-center gap-2 justify-end">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+                <span className="font-semibold">
+                  {entry.total_metrics.toLocaleString()} {metricName}
+                </span>
               </div>
             </div>
           </Link>
