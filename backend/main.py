@@ -4,7 +4,7 @@ import importlib
 from typing import Dict, Type
 
 from sites import SiteWorker
-from sites.types import Entity, SupportedSites
+from sites.types import RequestEntity, SupportedSites
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
@@ -29,6 +29,8 @@ async def lifespan(app: FastAPI):
     state['priority_queue'] = InMemoryQueue() # TODO: replace with redis implementation
     state['cache'] = {}
     yield
+    for site_worker in state['site_workers'].values():
+        site_worker.stop_queue_monitor()
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
 app = FastAPI(lifespan=lifespan)
@@ -50,7 +52,7 @@ async def hello_world():
 
 
 @app.post("/add-entity")
-async def add_entity(entity: Entity):
+async def add_entity(entity: RequestEntity):
     if entity.type not in state['site_workers']:
         return JSONResponse(content={"error": "Site not supported"}, status_code=400)
     site_worker = state['site_workers'][entity.type]
@@ -64,7 +66,7 @@ async def get_entity(site: SupportedSites, identifier: str):
         return JSONResponse(content={"error": "Site not supported"}, status_code=400)
     entity = state['site_workers'][site.value].retrieve_entity(identifier)
     if not entity: 
-        entity = state['site_workers'][site.value].run(Entity(type=site, identifier=identifier))
+        entity = state['site_workers'][site.value].run(RequestEntity(type=site, identifier=identifier))
     stats = state['site_workers'][site.value].get_entity_stats(identifier)
 
     return JSONResponse(content={"response": {"entity": entity.to_dict(drop=['id']) if entity else None, "stats": stats.to_dict()}}, status_code=200)

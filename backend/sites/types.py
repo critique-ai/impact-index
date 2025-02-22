@@ -15,10 +15,9 @@ def _get_supported_sites():
 # Create the enum dynamically
 SupportedSites = Enum('SupportedSites', _get_supported_sites())
 
-class Entity(BaseModel):
-    type: SupportedSites
+class RequestEntity(BaseModel):
+    type: str
     identifier: str
-
 
 class Record(BaseModel):
     link: str

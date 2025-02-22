@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, text, Column, String, DateTime, UUID, ForeignKey, Integer, Float, Boolean, Enum
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.pool import QueuePool
 
 import os 
 from datetime import datetime 
@@ -11,8 +12,15 @@ Base = declarative_base()
 
 DATABASE_URL = f"postgresql+psycopg2://{os.getenv('DB_URL')}" #
 
-# Set up the async database engine and session
-engine = create_engine(DATABASE_URL, echo=True, pool_size=10, max_overflow=20, pool_timeout=5, pool_recycle=1800,pool_pre_ping=True)
+# Configure engine with proper pooling settings for multi-threaded use
+engine = create_engine(
+    DATABASE_URL,
+    poolclass=QueuePool,
+    pool_size=20,  # Adjust based on your expected concurrent threads
+    max_overflow=10,  # Allow creating additional connections if pool is full
+    pool_timeout=30,  # Timeout when waiting for connection from pool
+    pool_pre_ping=True  # Verify connection is still valid before using
+)
 
 
 class ToDictMixin:
@@ -35,8 +43,7 @@ class ToDictMixin:
 class EntityBase(Base,ToDictMixin):
     __abstract__ = True
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    identifier = Column(String, nullable=False)
+    identifier = Column(String, nullable=False,unique=True,primary_key=True)
     index = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     last_updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)

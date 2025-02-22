@@ -4,7 +4,7 @@ import praw
 
 from typing import List
 
-from sites.types import Entity, Record, SupportedSites
+from sites.types import RequestEntity, Record
 from sites import SiteWorker
 
 
@@ -27,7 +27,7 @@ class Reddit(SiteWorker):
         self.reddit_client.read_only = True
 
 
-    def records_for_entity(self, entity: Entity) -> List[Record]:
+    def records_for_entity(self, entity: RequestEntity) -> List[Record]:
         user = self.reddit_client.redditor(entity.identifier)
         comments = user.comments.new(limit=None)
         posts = user.submissions.top(limit=None)
@@ -35,7 +35,7 @@ class Reddit(SiteWorker):
         post_records = [Record(link=post.permalink, description=post.title, created_at=post.created_utc, metric=post.score, metric_type="upvotes") for post in posts]
         return comment_records + post_records
 
-    def get_related_entities(self, entity: Entity) -> List[Entity]:
+    def get_related_entities(self, entity: RequestEntity) -> List[RequestEntity]:
         # get users that have commented on this user's posts and users that this user has commented on
         entity_set = set()
         related_entities = []
@@ -47,9 +47,10 @@ class Reddit(SiteWorker):
             post = comment.submission
             #get the author of the post
             post_author = post.author
-            if post_author not in entity_set:
-                entity_set.add(post_author)
-                related_entities.append(Entity(identifier=post_author,type=SupportedSites.reddit))
+            if post_author:
+                if post_author.name not in entity_set:
+                    entity_set.add(post_author.name)
+                    related_entities.append(RequestEntity(identifier=post_author.name,type=self.name))
         
         for post in posts:
             #get the comments on this post
@@ -57,7 +58,13 @@ class Reddit(SiteWorker):
             for comment in comments:
                 #get the author of the comment
                 comment_author = comment.author
-                if comment_author not in entity_set:
-                    entity_set.add(comment_author)
-                    related_entities.append(Entity(identifier=comment_author,type=SupportedSites.reddit))
+                if comment_author:
+                    if comment_author.name not in entity_set:
+                        entity_set.add(comment_author.name)
+                        related_entities.append(RequestEntity(identifier=comment_author.name,type=self.name))
         return related_entities
+    
+
+if __name__ == "__main__":
+    reddit = Reddit()
+    print(reddit.get_related_entities(RequestEntity(type="reddit", identifier="critiqueextension")))

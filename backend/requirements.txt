@@ -11,3 +11,4 @@ uvicorn
 slowapi 
 redis
 rq
+google-api-python-client

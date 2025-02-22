@@ -8,7 +8,7 @@ backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(backend_dir)
 
 from sites import SiteWorker
-from sites.types import Entity, Record
+
 
 # Create a mock SiteWorker for testing
 class ValidMockSiteWorker(SiteWorker):
@@ -22,10 +22,10 @@ class ValidMockSiteWorker(SiteWorker):
     def __init__(self):
         super().__init__()
     
-    def records_for_entity(self, entity: Entity) -> List[Record]:
+    def records_for_entity(self, entity): # -> List[Record]: #TODO: fix this
         return []
 
-    def get_related_entities(self, entity: Entity) -> List[Entity]:
+    def get_related_entities(self, entity): # -> List[RequestEntity]: #TODO: fix this
         return []
 
 # Create an invalid worker (doesn't inherit from SiteWorker)

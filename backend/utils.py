@@ -2,7 +2,6 @@ from typing import List, Dict, Type
 import os
 import importlib
 
-from sites.types import Record
 from sites import SiteWorker
 
 
