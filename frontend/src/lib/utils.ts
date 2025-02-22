@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getSites = async (): Promise<Site[]> => {
   try {
+    console.log('Fetching from:', `${process.env.NEXT_PUBLIC_BACKEND_URL}/supported-sites`);
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/supported-sites`, {
       method: 'GET',
       headers: {
