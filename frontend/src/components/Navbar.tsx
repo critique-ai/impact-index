@@ -138,7 +138,7 @@ export function Navbar() {
               asChild 
               variant="outline" 
               size="sm" 
-              className="bg-[#24292e] hover:bg-[#2f363d] text-white border-[#1b1f23] hover:border-[#1b1f23]"
+              className="hidden md:flex bg-[#24292e] hover:bg-[#2f363d] text-white border-[#1b1f23] hover:border-[#1b1f23]"
             >
               <a
                 href="https://github.com/critique-ai/impact-index"
