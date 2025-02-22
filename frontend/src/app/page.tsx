@@ -21,8 +21,13 @@ function PreviewModal({ isOpen, onClose, url, onMouseLeave }: PreviewModalProps)
     <div 
       data-preview-window
       onMouseLeave={onMouseLeave}
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-opacity duration-200 ease-in-out opacity-0 data-[show=true]:opacity-100" 
+      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-300 ease-in-out opacity-0 data-[show=true]:opacity-100" 
       data-show={isOpen}
+      style={{ 
+        opacity: isOpen ? 1 : 0,
+        visibility: isOpen ? 'visible' : 'hidden',
+        transition: 'opacity 300ms ease-in-out, visibility 300ms ease-in-out'
+      }}
     >
       <div className="bg-white rounded-lg w-[600px] h-[400px] shadow-2xl relative border border-gray-200">
         <div className="absolute top-0 left-0 right-0 bg-gray-100 px-2 py-1 rounded-t-lg flex items-center">
@@ -54,7 +59,7 @@ export default function Home() {
     hoverTimeoutRef.current = setTimeout(() => {
       setPreviewUrl('https://en.wikipedia.org/wiki/H-index#Calculation');
       setIsPreviewOpen(true);
-    }, 500); // 0.5 second delay
+    }, 500); // basically 0 second delay
   };
 
   const handleMouseLeave = (e: React.MouseEvent) => {
@@ -82,12 +87,15 @@ export default function Home() {
             </div>
           </div>
 
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-12 mt-4">
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4 mt-8">
             Calculating an <span 
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              className="text-blue-500 hover:text-blue-700 underline cursor-help"
-            >H-index</span> of sorts for various sites on the web. (Fully Open Source btw.)
+              className="font-medium border-b border-dotted border-gray-500 hover:border-gray-700 cursor-help text-slate-900 dark:text-slate-200"
+            >H-index</span> of sorts for various sites on the web.
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-12">
+            (Fully Open Source btw.)
           </p>
 
           <div className="flex justify-center gap-4 mb-12">
