@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from 'next/link';
-import { GitBranch, Search } from 'lucide-react';
+import { GitBranch, Search, Moon, Sun } from 'lucide-react';
 import { Button } from './ui/button';
 import { useParams } from 'next/navigation';
 import { useSites } from '@/components/SitesProvider';
@@ -16,6 +16,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -49,6 +50,7 @@ export function Navbar() {
   const params = useParams();
   const { sites } = useSites();
   const [searchQuery, setSearchQuery] = React.useState("");
+  const { setTheme } = useTheme();
 
   const filteredSites = sites.filter((site) =>
     site.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -101,22 +103,54 @@ export function Navbar() {
               </NavigationMenuList>
             </NavigationMenu>
           </div>
-          <Button 
-            asChild 
-            variant="outline" 
-            size="sm" 
-            className="bg-[#24292e] hover:bg-[#2f363d] text-white border-[#1b1f23] hover:border-[#1b1f23]"
-          >
-            <a
-              href="https://github.com/critique-ai/impact-index"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center"
+          <div className="flex items-center gap-4">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger showChevron={false}>
+                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span className="sr-only">Toggle theme</span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[120px] gap-3 p-4">
+                      <ListItem 
+                        title="Light"
+                        onClick={() => setTheme("light")}
+                        className="cursor-pointer"
+                      />
+                      <ListItem 
+                        title="Dark"
+                        onClick={() => setTheme("dark")}
+                        className="cursor-pointer"
+                      />
+                      <ListItem 
+                        title="System"
+                        onClick={() => setTheme("system")}
+                        className="cursor-pointer"
+                      />
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            <Button 
+              asChild 
+              variant="outline" 
+              size="sm" 
+              className="bg-[#24292e] hover:bg-[#2f363d] text-white border-[#1b1f23] hover:border-[#1b1f23]"
             >
-              <GitBranch className="mr-2 h-4 w-4" />
-              <span>Code on GitHub</span>
-            </a>
-          </Button>
+              <a
+                href="https://github.com/critique-ai/impact-index"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <GitBranch className="mr-2 h-4 w-4" />
+                <span>Code on GitHub</span>
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
     </nav>
