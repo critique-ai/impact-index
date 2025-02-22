@@ -37,8 +37,7 @@ export const getTopResponse = (siteId: string, page: number, per_page: number): 
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-    },
-    credentials: 'include',
+    }
   }).then(data => {
     return data.json();
   });
@@ -52,8 +51,7 @@ export const getProfileResponse = (siteId: string, accountId: string): Promise<P
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-    },
-    credentials: 'include',
+    }
   }).then(data => {
     return data.json();
   });
