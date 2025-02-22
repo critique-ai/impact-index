@@ -6,6 +6,8 @@ import { SitesProvider } from '@/components/SitesProvider';
 import { getSites } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import type { Site } from '@/types';
+import { Analytics } from "@vercel/analytics/react"
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -23,7 +25,8 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-      <ThemeProvider
+        <Analytics />
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
