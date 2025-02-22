@@ -8,38 +8,42 @@ import { motion } from 'framer-motion';
 import { useSites } from '@/components/SitesProvider';
 import { useContext, useState, useEffect } from 'react';
 import type { Site, TopResponse } from '@/types';
+import { Loader2 } from 'lucide-react';
 
 export default function SitePage() {
   const params = useParams();
   const { sites } = useSites();
   const currentSite = sites.find(site => params.siteId === site.name);
   const [data, setData] = useState<TopResponse | null>(null);
+  const [filteredData, setFilteredData] = useState<TopResponse['entities']>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<TopResponse | null>(null);
   const [showNoResults, setShowNoResults] = useState(false);
 
   useEffect(() => {
     if (!searchTerm) {
       setShowNoResults(false);
-      getTopResponse(params.siteId as string, currentPage, perPage)
-        .then(response => setData(response));
-      return;
+      setFilteredData(data?.entities ?? []);
+    } else {
+      const filtered = data?.entities.filter(entity => 
+        entity.identifier.toLowerCase().includes(searchTerm.toLowerCase())
+      ) ?? [];
+      setFilteredData(filtered);
+      setShowNoResults(filtered.length === 0);
     }
+  }, [searchTerm, data]);
 
-    // Debounce the search
-    const timeoutId = setTimeout(() => {
-      fetch(`/api/search/${params.siteId}?q=${encodeURIComponent(searchTerm)}`)
-        .then(res => res.json())
-        .then(results => {
-          setSearchResults(results);
-          setShowNoResults(results.entities.length === 0);
-        });
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, params.siteId, currentPage, perPage]);
+  useEffect(() => {
+    setIsLoading(true);
+    getTopResponse(params.siteId as string, currentPage, perPage)
+      .then(response => {
+        setData(response);
+        setFilteredData(response?.entities ?? []);
+        setIsLoading(false);
+      });
+  }, [params.siteId, currentPage, perPage]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -64,6 +68,7 @@ export default function SitePage() {
             <SearchBar
               siteId={params.siteId as string}
               placeholder={`Search for a ${currentSite.entity_name.toLowerCase()}...`}
+              onSearch={setSearchTerm}
             />
             {showNoResults && (
               <div className="mt-4 text-center">
@@ -81,15 +86,21 @@ export default function SitePage() {
           </div>
 
           <div className="rounded-xl shadow-xl p-6">
-            <DataTable
-              data={(searchTerm ? searchResults?.entities : data?.entities) ?? []}
-              siteId={params.siteId as string}
-              metricName={currentSite.metric_name}
-              EntityName={currentSite.entity_name}
-              currentPage={currentPage}
-              totalPages={(searchTerm ? searchResults?.pagination?.total_pages : data?.pagination?.total_pages) ?? 1}
-              onPageChange={handlePageChange}
-            />
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+              </div>
+            ) : (
+              <DataTable
+                data={searchTerm ? filteredData : data?.entities ?? []}
+                siteId={params.siteId as string}
+                metricName={currentSite.metric_name}
+                EntityName={currentSite.entity_name}
+                currentPage={currentPage}
+                totalPages={data?.pagination?.total_pages ?? 1}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
         </motion.div>
       </div>

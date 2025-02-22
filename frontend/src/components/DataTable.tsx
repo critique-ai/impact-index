@@ -94,14 +94,14 @@ export function DataTable({
                 </h3>
               </div>
               <div className="flex items-center gap-2 justify-end">
-                <Award className="h-5 w-5 text-yellow-500" />
                 <span className="font-semibold">{entry.index}</span>
+                <Award className="h-5 w-5 text-yellow-500" />
               </div>
               <div className="flex items-center gap-2 justify-end">
-                <TrendingUp className="h-5 w-5 text-green-500" />
                 <span className="font-semibold">
                   {entry.total_metrics.toLocaleString()} {metricName}
                 </span>
+                <TrendingUp className="h-5 w-5 text-green-500" />
               </div>
             </div>
           </Link>

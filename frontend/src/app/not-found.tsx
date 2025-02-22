@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-foreground mb-4">Site Not Found</h1>
+        <h1 className="text-4xl font-bold text-foreground mb-4">Entity Not Found</h1>
         <p className="text-muted-foreground mb-8">
           Sorry, we don't support this platform/user. They may not exist, or we may not support this platform yet. Either way, Check back later!
         </p>
