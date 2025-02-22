@@ -27,7 +27,7 @@ class Youtube(SiteWorker):
             ).execute()
         
             if not channel_response['items']:
-                return records
+                raise Exception("Channel not found")
             
             channel_id = channel_response['items'][0]['id']
             uploads_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
@@ -57,6 +57,7 @@ class Youtube(SiteWorker):
                     records.append(Record(link=f"https://www.youtube.com/watch?v={video['id']}", description=video['snippet']['title'], created_at=video['snippet']['publishedAt'], metric=int(int(video['statistics'].get('viewCount', 0))/1000000), metric_type="views(thousands)"))
         except Exception as e:
             print(f"Error fetching channel details: {e}")
+            raise Exception(f"Error fetching channel details: {e}")
         return records
 
     def get_related_entities(self, entity: RequestEntity) -> List[RequestEntity]:
@@ -101,3 +102,6 @@ class Youtube(SiteWorker):
             print(f"Error fetching channel details: {e}")
         return entities
 
+if __name__ == "__main__":
+    youtube = Youtube()
+    print(youtube.get_related_entities(RequestEntity(type="youtube", identifier="UC-9-kyTWobZ36ZUkB3rDt9Q")))

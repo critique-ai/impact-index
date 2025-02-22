@@ -49,3 +49,18 @@ class EntityBase(Base,ToDictMixin):
     last_updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     total_metrics = Column(Integer, default=0)
     url = Column(String, nullable=True)
+
+
+class Metadata(Base,ToDictMixin):
+    __tablename__ = "sites"
+    sites = Column(String, primary_key=True, nullable=False)
+    current_entities = Column(Integer,default=0)
+    index_mean = Column(Float,default=0)
+    index_median = Column(Float,default=0)
+    index_stddev = Column(Float,default=0)
+    index_min = Column(Float,default=0)
+    index_max = Column(Float,default=0)
+    last_updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    created_at = Column(DateTime, default=datetime.now)
+    total_entities = Column(Integer,default=0)
+    

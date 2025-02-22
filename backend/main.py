@@ -102,6 +102,7 @@ async def supported_sites():
             "primary_color": state['site_workers'][site].primary_color,
             "secondary_color": state['site_workers'][site].secondary_color
         })
+    print('sending sites', sites)
     return JSONResponse(content={"response": sites}, status_code=200)
 
 # if __name__ == "__main__":
