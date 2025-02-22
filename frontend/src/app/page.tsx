@@ -112,16 +112,16 @@ export default function Home() {
             <h2 className="text-2xl font-semibold mb-4">FAQ</h2>
             <div className="space-y-4">
               <details className="border-b border-gray-300 pb-4">
-                <summary className="cursor-pointer text-lg font-medium">What's an H index?</summary>
-                <p className="mt-2 text-gray-600">The H-index is a metric that measures both the productivity and citation impact of the publications of a scientist or scholar.</p>
+                <summary className="cursor-pointer text-lg font-medium">What do you mean H-index on everything?</summary>
+                <p className="mt-2 text-gray-600">So basically H-index is a interesting metric that measures impact for researchers in academics. Like if someone came up with a one hit wonder, they'd have an H index of 1, in order to have a higher H index you have to have a continued string of useful stuff. It seemed like an interesting exercise to apply that to various sites since seems quite translatable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc.  </p>
               </details>
               <details className="border-b border-gray-300 pb-4">
                 <summary className="cursor-pointer text-lg font-medium">Why did you make this?</summary>
-                <p className="mt-2 text-gray-600">Just something I always wondered</p>
+                <p className="mt-2 text-gray-600">Trying to raise my own H-index</p>
               </details>
               <details className="border-b border-gray-300 pb-4">
                 <summary className="cursor-pointer text-lg font-medium">Who's behind this?</summary>
-                <p className="mt-2 text-gray-600">Critique AI, <a href="https://critique-labs.ai" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">check us out</a></p>
+                <p className="mt-2 text-gray-600">One of the tinkerers at Critique AI, <a href="https://critique-labs.ai" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">check us out</a></p>
               </details>
             </div>
           </div>
