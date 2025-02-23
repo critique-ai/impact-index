@@ -9,6 +9,7 @@ import { useSites } from '@/components/SitesProvider';
 import { useContext, useState, useEffect } from 'react';
 import type { Site, TopResponse } from '@/types';
 import { Loader2 } from 'lucide-react';
+import { toWords } from 'number-to-words';
 
 export default function SitePage() {
   const params = useParams();
@@ -65,7 +66,7 @@ export default function SitePage() {
             {currentSite.current_entities != null && (
               <div className="flex justify-center items-center gap-4">
                 <div className="relative w-24 h-24">
-                  {currentSite.target_entities != null && currentSite.target_entities !== -1 ? (
+                  {currentSite.target_entities != null && currentSite.target_entities >0 ? (
                     <>
                       <svg className="w-full h-full transform -rotate-90">
                         <circle
@@ -110,25 +111,24 @@ export default function SitePage() {
                         className="text-center"
                       >
                         <span className="text-2xl font-bold text-blue-500">
-                          {currentSite.current_entities.toLocaleString()}
+                          {toWords(currentSite.current_entities.toLocaleString())}
                         </span>
-                        <span className="block text-xs text-gray-500">indexed</span>
                       </motion.div>
                     </div>
                   )}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {currentSite.target_entities != null && currentSite.target_entities !== -1 ? (
+                  {currentSite.target_entities != null && currentSite.target_entities > 0 ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      <span className="font-medium">{currentSite.current_entities.toLocaleString()}</span>
-                      {' '}{currentSite.entity_name.toLowerCase()} indexed
+                      <span className="font-medium">{toWords(currentSite.current_entities.toLocaleString())}</span>
+                      {' '}{tocurrentSite.entity_name.toLowerCase()} indexed
                       <br />
                       out of supposedly{' '}
-                      <span className="font-medium">{currentSite.target_entities.toLocaleString()}</span>
+                      <span className="font-medium">{toWords(currentSite.target_entities)}</span>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -136,7 +136,7 @@ export default function SitePage() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      Total {currentSite.entity_name.toLowerCase()} indexed
+                      {currentSite.entity_name.toLowerCase()} indexed
                     </motion.div>
                   )}
                 </div>
