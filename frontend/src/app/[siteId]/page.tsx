@@ -62,7 +62,7 @@ export default function SitePage() {
               {currentSite.name} rankings
             </h1>
             
-            {currentSite.total_entities != null && (
+            {currentSite.current_entities != null && (
               <div className="flex justify-center items-center gap-4">
                 <div className="relative w-24 h-24">
                   {currentSite.target_entities != null && currentSite.target_entities !== -1 ? (
@@ -86,7 +86,7 @@ export default function SitePage() {
                           strokeLinecap="round"
                           initial={{ pathLength: 0 }}
                           animate={{ 
-                            pathLength: currentSite.total_entities / currentSite.target_entities 
+                            pathLength: currentSite.current_entities / currentSite.target_entities 
                           }}
                           transition={{ duration: 1, ease: "easeOut" }}
                           style={{
@@ -97,7 +97,7 @@ export default function SitePage() {
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span className="text-sm font-medium">
-                          {Math.round((currentSite.total_entities / currentSite.target_entities) * 100)}%
+                          {Math.round((currentSite.current_entities / currentSite.target_entities) * 100)}%
                         </span>
                       </div>
                     </>
@@ -110,7 +110,7 @@ export default function SitePage() {
                         className="text-center"
                       >
                         <span className="text-2xl font-bold text-blue-500">
-                          {currentSite.total_entities.toLocaleString()}
+                          {currentSite.current_entities.toLocaleString()}
                         </span>
                         <span className="block text-xs text-gray-500">indexed</span>
                       </motion.div>
@@ -124,7 +124,7 @@ export default function SitePage() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      <span className="font-medium">{currentSite.total_entities.toLocaleString()}</span>
+                      <span className="font-medium">{currentSite.current_entities.toLocaleString()}</span>
                       {' '}{currentSite.entity_name.toLowerCase()} indexed
                       <br />
                       out of{' '}
