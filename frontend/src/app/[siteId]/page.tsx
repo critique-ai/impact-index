@@ -127,7 +127,7 @@ export default function SitePage() {
                       <span className="font-medium">{currentSite.current_entities.toLocaleString()}</span>
                       {' '}{currentSite.entity_name.toLowerCase()} indexed
                       <br />
-                      out of{' '}
+                      out of supposedly{' '}
                       <span className="font-medium">{currentSite.target_entities.toLocaleString()}</span>
                     </motion.div>
                   ) : (
