@@ -45,22 +45,27 @@ class EntityBase(Base,ToDictMixin):
     
     identifier = Column(String, nullable=False,unique=True,primary_key=True)
     index = Column(Integer, nullable=False)
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, nullable=True)
     last_updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     total_metrics = Column(Integer, default=0)
     url = Column(String, nullable=True)
 
 
-class Metadata(Base,ToDictMixin):
+class AggregatedMetrics(Base,ToDictMixin):
     __tablename__ = "sites"
+    __table_args__ = {'schema': 'meta'}
     sites = Column(String, primary_key=True, nullable=False)
     current_entities = Column(Integer,default=0)
     index_mean = Column(Float,default=0)
     index_median = Column(Float,default=0)
     index_stddev = Column(Float,default=0)
-    index_min = Column(Float,default=0)
+    index_min = Column(Float,default=float(1e9))
     index_max = Column(Float,default=0)
     last_updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     created_at = Column(DateTime, default=datetime.now)
     total_entities = Column(Integer,default=0)
-    
+
+def create_tables():
+    Base.metadata.create_all(engine) 
+
+create_tables()

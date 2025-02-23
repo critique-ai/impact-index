@@ -9,20 +9,18 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getSites = async (): Promise<Site[]> => {
   try {
-    console.log('Fetching from:', `${process.env.NEXT_PUBLIC_BACKEND_URL}/supported-sites`);
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/supported-sites`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
+      next: { revalidate: 60 }
     });
-
 
     if (!response.ok) {
       console.error('Failed to fetch sites:', response.status, response.statusText);
       return [];
     }
-
     const data = await response.json();
     return data.response ?? [];
   } catch (error) {

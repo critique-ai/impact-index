@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
     for site_worker in state['site_workers'].values():
         site_worker.stop_queue_monitor()
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
+limiter = Limiter(key_func=get_remote_address, default_limits=["20/minute"])
 app = FastAPI(lifespan=lifespan)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -57,7 +57,7 @@ async def add_entity(entity: RequestEntity):
         return JSONResponse(content={"error": "Site not supported"}, status_code=400)
     site_worker = state['site_workers'][entity.type]
     related_entities = site_worker.get_related_entities(entity)
-    records = site_worker.records_for_entity(entity)
+    entity_info = site_worker.entity_info(entity)
     return JSONResponse(content={"response": "Entity added to queue"}, status_code=200)
 
 @app.get("/{site}/{identifier}")
@@ -93,7 +93,8 @@ async def top_entities_for_site(site: SupportedSites, page: int, per_page: int):
 async def supported_sites():
     sites = []
     for site in state['site_workers'].keys():
-        sites.append({
+        metadata = state['site_workers'][site].get_metadata()
+        site_info = {
             "name": site,
             "description": state['site_workers'][site].description,
             "index_description": state['site_workers'][site].index_description,
@@ -101,19 +102,15 @@ async def supported_sites():
             "metric_name": state['site_workers'][site].metric_name,
             "primary_color": state['site_workers'][site].primary_color,
             "secondary_color": state['site_workers'][site].secondary_color
-        })
-    print('sending sites', sites)
+        }
+        if metadata:
+            print(metadata)
+            site_info['index_mean'] = metadata['index_mean']
+            site_info['index_median'] = metadata['index_median']
+            site_info['index_stddev'] = metadata['index_stddev']
+            site_info['index_min'] = metadata['index_min']
+            site_info['index_max'] = metadata['index_max']
+            site_info['current_entities'] = metadata['current_entities']
+            site_info['target_entities'] = metadata['target_entities']
+        sites.append(site_info)
     return JSONResponse(content={"response": sites}, status_code=200)
-
-# if __name__ == "__main__":
-#     site_workers = load_site_workers()
-#     print(f"Loaded site workers: {list(site_workers.keys())}")
-    
-#     # Example usage
-#     reddit_worker = site_workers['reddit']()
-#     records = reddit_worker.records_for_entity(
-#         Entity(type=SupportedSites.reddit, identifier="critiqueextension")
-#     )
-#     h_index = calculate_h_index(records)
-#     print('Number of records:', len(records))
-#     print('H-index:', h_index)

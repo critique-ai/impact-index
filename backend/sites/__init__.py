@@ -1,14 +1,19 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 from datetime import datetime
-from db.definitions import engine, EntityBase, ToDictMixin
+from db.definitions import engine, EntityBase, ToDictMixin, AggregatedMetrics
 from sqlalchemy.orm import Session
-from sites.types import RequestEntity, Record
+from sites.types import RequestEntity, Record, EntityInfo
+from sqlalchemy import func
 from functools import lru_cache
 from dataclasses import dataclass
 from queue import Queue
 from threading import Thread, Lock
 import time
+import math
+import os 
+import requests
+
 
 @dataclass
 class EntityStats:
@@ -18,10 +23,18 @@ class EntityStats:
         return {
             "percentile": self.percentile
         }
+    
+
 
 class SiteWorker(ABC):
-    name: str  # Class attribute that must be defined by subclasses
-    
+    name: str  # Class attributes that must be defined by subclasses
+    description: str
+    index_description: str
+    entity_name: str
+    metric_name: str
+    primary_color: str
+    secondary_color: str
+
     def __init__(self):
         # Create a unique entity table class name for this specific site worker
         class_name = f"{self.name.capitalize()}Entity"
@@ -65,7 +78,7 @@ class SiteWorker(ABC):
         return len(records),total
 
     @abstractmethod
-    def records_for_entity(self, entity: RequestEntity) -> List[Record]:
+    def entity_info(self, entity: RequestEntity) -> EntityInfo:
         """Fetch all records for a given entity."""
         pass
     
@@ -97,12 +110,14 @@ class SiteWorker(ABC):
 
                 
 
-    def update_entity(self, entity,session: Session,index: int = 0 ,total_metrics: int = 0):
+    def update_entity(self, entity_info: EntityInfo,session: Session,index: int = 0 ,total_metrics: int = 0):
         entity_model = self.EntityModel(
-            identifier=entity.identifier,
+            identifier=entity_info.metadata.identifier,
             index=index,
             total_metrics=total_metrics,
             last_updated_at=datetime.now(),
+            url=entity_info.metadata.url,
+            created_at=entity_info.metadata.created_at
         )
         merged_entity = session.merge(entity_model)
         session.commit()
@@ -114,11 +129,37 @@ class SiteWorker(ABC):
         """
         updated_entity = None
         try:
-            # Create a thread-local engine and session
-            records = self.records_for_entity(entity)
-            index, total = self.calculate_h_index(records)
+            entity_info = self.entity_info(entity)
+            index, total = self.calculate_h_index(entity_info.records)
             with Session(engine, expire_on_commit=False) as session:
-                updated_entity = self.update_entity(entity,session=session,index=index,total_metrics=total)
+                updated_entity = self.update_entity(entity_info,session=session,index=index,total_metrics=total)
+                metadata = session.query(AggregatedMetrics).filter(AggregatedMetrics.sites == self.name).first()
+                if metadata:
+                    metadata.current_entities += 1
+                    metadata.index_mean = (metadata.index_mean * (metadata.current_entities - 1) + index) / metadata.current_entities
+                    metadata.index_median = session.query(
+                        func.percentile_cont(0.5)
+                        .within_group(self.EntityModel.index.asc())
+                    ).scalar()
+                    metadata.index_stddev = (((metadata.current_entities-2)*((metadata.index_stddev)**2)/(metadata.current_entities-1)) + ((index - metadata.index_mean)**2)/(metadata.current_entities))**0.5
+                    metadata.index_min = min(metadata.index_min, index)
+                    metadata.index_max = max(metadata.index_max, index)
+                    session.commit()
+                else:
+                    #metada doesn't exist for the site will have to compute for the existing entries 
+                    current_entities = session.query(self.EntityModel).count()
+                    mean = session.query(self.EntityModel).with_entities(func.avg(self.EntityModel.index)).scalar()
+                    # Calculate median using percentile_cont
+                    median = session.query(
+                        func.percentile_cont(0.5)
+                        .within_group(self.EntityModel.index.asc())
+                    ).scalar()
+                    stddev = session.query(self.EntityModel).with_entities(func.stddev(self.EntityModel.index)).scalar()
+                    metadata_min = session.query(self.EntityModel).with_entities(func.min(self.EntityModel.index)).scalar()
+                    metadata_max = session.query(self.EntityModel).with_entities(func.max(self.EntityModel.index)).scalar()
+                    metadata = AggregatedMetrics(sites=self.name, current_entities=current_entities, index_mean=mean, index_median=median, index_stddev=stddev, index_min=metadata_min, index_max=metadata_max)
+                    session.add(metadata)
+                    session.commit()
             
             # Remove the related entities call from here
             # The queue monitor will handle this
@@ -126,6 +167,28 @@ class SiteWorker(ABC):
         except Exception as e:
             print(f"Error updating entity {entity.identifier}: {e}")
         return updated_entity
+    
+    def get_metadata(self):
+        with Session(engine, expire_on_commit=False) as session:
+            metadata = session.query(AggregatedMetrics).filter(AggregatedMetrics.sites == self.name).first()
+            data = metadata
+        if not data: return None 
+        data = data.to_dict()
+        try:
+            url = "https://api.critique-labs.ai/v1/published-service/active-entity-count"
+            request_data = { "site": self.name, "metric": self.metric_name }
+            headers = {
+                'Content-Type': 'application/json',
+                'X-API-Key': os.getenv('CRITIQUE_API_KEY')
+            }
+            response = requests.post(url, headers=headers, json=request_data)
+            values = response.json()
+            print(values)
+            data['target_entities'] = values['response']['result']
+        except Exception as e:
+            print(f"Error getting metadata for {self.name}: {e}")
+            data['target_entities'] = -1
+        return data 
     
     def get_top_entities(self, page: int = 1, per_page: int = 10):
         """
@@ -233,4 +296,4 @@ class SiteWorker(ABC):
                 # Sleep briefly after an error before retrying
                 time.sleep(1)
 
-     
+    

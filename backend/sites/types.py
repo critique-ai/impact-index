@@ -3,7 +3,8 @@ from enum import Enum
 from pydantic import BaseModel
 import os
 import pathlib
-
+from typing import List
+from dataclasses import dataclass
 def _get_supported_sites():
     # Get the directory where this file is located
     current_dir = pathlib.Path(__file__).parent
@@ -26,3 +27,19 @@ class Record(BaseModel):
     metric: int 
     metric_type: str
 
+@dataclass
+class EntityMetadata:
+    url: str = ""
+    identifier: str = ""
+    created_at: datetime = None
+
+@dataclass
+class EntityInfo:
+    records: List[Record]
+    metadata: EntityMetadata
+
+    def to_dict(self,drop=[]):
+        return {
+            "records": [record.to_dict(drop=drop) for record in self.records],
+            "metadata": self.metadata.to_dict()
+        }

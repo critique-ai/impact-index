@@ -22,7 +22,7 @@ class ValidMockSiteWorker(SiteWorker):
     def __init__(self):
         super().__init__()
     
-    def records_for_entity(self, entity): # -> List[Record]: #TODO: fix this
+    def entity_info(self, entity): # -> EntityInfo: #TODO: fix this
         return []
 
     def get_related_entities(self, entity): # -> List[RequestEntity]: #TODO: fix this

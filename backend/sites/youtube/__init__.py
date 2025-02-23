@@ -1,15 +1,14 @@
-from sites.types import RequestEntity, Record
+from sites.types import RequestEntity, Record, EntityInfo,EntityMetadata
 from sites import SiteWorker
 from typing import List
 from googleapiclient.discovery import build
 import os
-
-
+from datetime import datetime
 class Youtube(SiteWorker):
     name = "youtube"
     description = "Youtube channel H-index based on views"
-    index_description = "A channel has an H-index of N if they have N videos with at least N million views each"
-    entity_name = "Channel"
+    index_description = "A channel has an H-index of N if they have exactly N videos with at least N million views each"
+    entity_name = "Channels"
     metric_name = "Million views"
     primary_color = "bg-red-500"
     secondary_color = "white"
@@ -18,18 +17,21 @@ class Youtube(SiteWorker):
         self.client = build('youtube', 'v3', developerKey=os.getenv('YOUTUBE_API_KEY'))
 
     
-    def records_for_entity(self, entity: RequestEntity) -> List[Record]:
+    def entity_info(self, entity: RequestEntity) -> EntityInfo:
         records = []
+        metadata = EntityMetadata(identifier=entity.identifier, url=f"https://www.youtube.com/@{entity.identifier}")
         try:
             channel_response = self.client.channels().list(
                 forHandle=entity.identifier,
-                part='id,contentDetails'
+                part='id,contentDetails,snippet'
             ).execute()
         
             if not channel_response['items']:
                 raise Exception("Channel not found")
             
             channel_id = channel_response['items'][0]['id']
+            metadata.created_at  = datetime.fromisoformat(channel_response['items'][0]['snippet']['publishedAt'])
+            
             uploads_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
             video_ids = []
             next_page_token = None
@@ -58,7 +60,7 @@ class Youtube(SiteWorker):
         except Exception as e:
             print(f"Error fetching channel details: {e}")
             raise Exception(f"Error fetching channel details: {e}")
-        return records
+        return EntityInfo(records=records, metadata=metadata)
 
     def get_related_entities(self, entity: RequestEntity) -> List[RequestEntity]:
         #using featured channels for a given channel
