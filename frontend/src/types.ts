@@ -6,9 +6,14 @@ export interface Site {
   metric_name: string; // "upvotes", "views", etc.
   primary_color: string;
   secondary_color: string;
+  index_mean?: number;
+  index_median?: number;
+  index_stddev?: number;
+  index_min?: number;
+  index_max?: number;
+  target_entities?: number;
+  current_entities?: number;
 }
-
-
 
 export interface Entity {
   identifier: string;

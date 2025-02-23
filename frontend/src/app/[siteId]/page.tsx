@@ -4,7 +4,7 @@ import { DataTable } from '@/components/DataTable';
 import { SearchBar } from '@/components/SearchBar';
 import {  getTopResponse } from '@/lib/utils';
 import { notFound, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSites } from '@/components/SitesProvider';
 import { useContext, useState, useEffect } from 'react';
 import type { Site, TopResponse } from '@/types';
@@ -57,9 +57,93 @@ export default function SitePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold text-center mb-4">
-            {currentSite.name} rankings
-          </h1>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 mb-4">
+            <h1 className="text-4xl font-bold text-center">
+              {currentSite.name} rankings
+            </h1>
+            
+            {currentSite.total_entities != null && (
+              <div className="flex justify-center items-center gap-4">
+                <div className="relative w-24 h-24">
+                  {currentSite.target_entities != null && currentSite.target_entities !== -1 ? (
+                    <>
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle
+                          cx="48"
+                          cy="48"
+                          r="45"
+                          className="stroke-gray-200"
+                          strokeWidth="6"
+                          fill="none"
+                        />
+                        <motion.circle
+                          cx="48"
+                          cy="48"
+                          r="45"
+                          className="stroke-blue-500"
+                          strokeWidth="6"
+                          fill="none"
+                          strokeLinecap="round"
+                          initial={{ pathLength: 0 }}
+                          animate={{ 
+                            pathLength: currentSite.total_entities / currentSite.target_entities 
+                          }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                          style={{
+                            strokeDasharray: "283",
+                            strokeDashoffset: "283",
+                          }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-sm font-medium">
+                          {Math.round((currentSite.total_entities / currentSite.target_entities) * 100)}%
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="text-center"
+                      >
+                        <span className="text-2xl font-bold text-blue-500">
+                          {currentSite.total_entities.toLocaleString()}
+                        </span>
+                        <span className="block text-xs text-gray-500">indexed</span>
+                      </motion.div>
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {currentSite.target_entities != null && currentSite.target_entities !== -1 ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <span className="font-medium">{currentSite.total_entities.toLocaleString()}</span>
+                      {' '}{currentSite.entity_name.toLowerCase()} indexed
+                      <br />
+                      out of{' '}
+                      <span className="font-medium">{currentSite.target_entities.toLocaleString()}</span>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      Total {currentSite.entity_name.toLowerCase()} indexed
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto text-lg">
             {currentSite.index_description}
           </p>
@@ -99,6 +183,7 @@ export default function SitePage() {
                 currentPage={currentPage}
                 totalPages={data?.pagination?.total_pages ?? 1}
                 onPageChange={handlePageChange}
+                resultsPerPage={perPage}
               />
             )}
           </div>

@@ -13,6 +13,7 @@ interface DataTableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  resultsPerPage: number;
 }
 
 export function DataTable({ 
@@ -22,6 +23,7 @@ export function DataTable({
   metricName, 
   currentPage, 
   totalPages, 
+  resultsPerPage,
   onPageChange 
 }: DataTableProps) {
   const [sortConfig, setSortConfig] = useState<{
@@ -78,34 +80,39 @@ export function DataTable({
         </div>
 
         {/* Data Rows */}
-        {sortedData.map((entry, index) => (
-          <Link
-            key={entry.identifier}
-            href={`/${siteId}/${entry.identifier}`}
-            className="group block"
-          >
-            <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 rounded-lg transition-colors items-center">
-              <div className="w-12 text-2xl font-bold text-gray-500">
-                #{index + 1}
+        {sortedData.map((entry, index) => {
+          // Calculate the actual rank considering the page number
+          const actualRank = (currentPage - 1) * resultsPerPage + (index + 1);
+          
+          return (
+            <Link
+              key={entry.identifier}
+              href={`/${siteId}/${entry.identifier}`}
+              className="group block"
+            >
+              <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 rounded-lg transition-colors items-center">
+                <div className="w-12 text-2xl font-bold text-gray-500">
+                  #{actualRank}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate">
+                    {entry.identifier}
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2 justify-end">
+                  <span className="font-semibold">{entry.index}</span>
+                  <Award className="h-5 w-5 text-yellow-500" />
+                </div>
+                <div className="flex items-center gap-2 justify-end">
+                  <span className="font-semibold">
+                    {entry.total_metrics.toLocaleString()} {metricName}
+                  </span>
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                </div>
               </div>
-              <div className="min-w-0">
-                <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate">
-                  {entry.identifier}
-                </h3>
-              </div>
-              <div className="flex items-center gap-2 justify-end">
-                <span className="font-semibold">{entry.index}</span>
-                <Award className="h-5 w-5 text-yellow-500" />
-              </div>
-              <div className="flex items-center gap-2 justify-end">
-                <span className="font-semibold">
-                  {entry.total_metrics.toLocaleString()} {metricName}
-                </span>
-                <TrendingUp className="h-5 w-5 text-green-500" />
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Pagination controls */}
