@@ -111,7 +111,7 @@ export default function SitePage() {
                         className="text-center"
                       >
                         <span className="text-2xl font-bold text-blue-500">
-                          {toWords(currentSite.current_entities.toLocaleString())}
+                          {toWords(currentSite.current_entities)}
                         </span>
                       </motion.div>
                     </div>
@@ -124,8 +124,8 @@ export default function SitePage() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      <span className="font-medium">{toWords(currentSite.current_entities.toLocaleString())}</span>
-                      {' '}{tocurrentSite.entity_name.toLowerCase()} indexed
+                      <span className="font-medium">{toWords(currentSite.current_entities)}</span>
+                      {' '}{currentSite.entity_name.toLowerCase()} indexed
                       <br />
                       out of supposedly{' '}
                       <span className="font-medium">{toWords(currentSite.target_entities)}</span>
