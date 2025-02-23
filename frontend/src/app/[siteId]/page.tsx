@@ -4,7 +4,7 @@ import { DataTable } from '@/components/DataTable';
 import { SearchBar } from '@/components/SearchBar';
 import {  getTopResponse } from '@/lib/utils';
 import { notFound, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion } from "motion/react";
 import { useSites } from '@/components/SitesProvider';
 import { useContext, useState, useEffect } from 'react';
 import type { Site, TopResponse } from '@/types';

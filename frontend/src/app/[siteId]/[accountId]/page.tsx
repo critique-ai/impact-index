@@ -4,7 +4,7 @@ import { getProfileResponse } from '@/lib/utils';
 import { useSites } from '@/components/SitesProvider';
 import { useContext } from 'react';
 import { notFound } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion } from "motion/react";
 import { Award, BarChart3, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { StatsCard } from '@/components/StatsCard';
