@@ -104,7 +104,6 @@ async def supported_sites():
             "secondary_color": state['site_workers'][site].secondary_color
         }
         if metadata:
-            print(metadata)
             site_info['index_mean'] = metadata['index_mean']
             site_info['index_median'] = metadata['index_median']
             site_info['index_stddev'] = metadata['index_stddev']

@@ -176,14 +176,13 @@ class SiteWorker(ABC):
         data = data.to_dict()
         try:
             url = "https://api.critique-labs.ai/v1/published-service/active-entity-count"
-            request_data = { "site": self.name, "metric": self.metric_name }
+            request_data = { "site": self.name, "metric": f"total {self.metric_name}" }
             headers = {
                 'Content-Type': 'application/json',
                 'X-API-Key': os.getenv('CRITIQUE_API_KEY')
             }
             response = requests.post(url, headers=headers, json=request_data)
             values = response.json()
-            print(values)
             data['target_entities'] = values['response']['result']
         except Exception as e:
             print(f"Error getting metadata for {self.name}: {e}")
