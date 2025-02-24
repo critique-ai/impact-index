@@ -14,6 +14,8 @@ interface DataTableProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   resultsPerPage: number;
+  onMouseEnter: (url: string) => void;
+  onMouseLeave: (e: React.MouseEvent) => void;
 }
 
 export function DataTable({ 
@@ -24,7 +26,9 @@ export function DataTable({
   currentPage, 
   totalPages, 
   resultsPerPage,
-  onPageChange 
+  onPageChange,
+  onMouseEnter,
+  onMouseLeave 
 }: DataTableProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Entity;
@@ -83,19 +87,24 @@ export function DataTable({
         {sortedData.map((entry, index) => {
           // Calculate the actual rank considering the page number
           const actualRank = (currentPage - 1) * resultsPerPage + (index + 1);
+          const profileUrl = `/${siteId}/${entry.identifier}`;
           
           return (
             <Link
               key={entry.identifier}
-              href={`/${siteId}/${entry.identifier}`}
+              href={profileUrl}
               className="group block"
             >
-              <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 rounded-lg transition-colors items-center">
+              <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 transition-colors items-center">
                 <div className="w-12 text-2xl font-bold text-gray-500">
                   #{actualRank}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate">
+                  <h3 
+                    className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate cursor-help"
+                    onMouseEnter={() => onMouseEnter(profileUrl)}
+                    onMouseLeave={onMouseLeave}
+                  >
                     {entry.identifier}
                   </h3>
                 </div>
@@ -120,7 +129,7 @@ export function DataTable({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 rounded bg-gray-200 disabled:opacity-50"
+          className="px-4 py-2 bg-gray-200 disabled:opacity-50"
         >
           Previous
         </button>
@@ -130,7 +139,7 @@ export function DataTable({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 rounded bg-gray-200 disabled:opacity-50"
+          className="px-4 py-2 bg-gray-200 disabled:opacity-50"
         >
           Next
         </button>

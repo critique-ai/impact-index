@@ -6,48 +6,7 @@ import { MorphingText } from "@/components/magicui/morphing-text";
 import { RippleButton } from "@/components/magicui/ripple-button";
 import { useSites } from '@/components/SitesProvider';
 import { AuroraText } from '@/components/magicui/aurora-text';
-
-interface PreviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  url: string;
-  onMouseLeave: (e: React.MouseEvent) => void;
-}
-
-function PreviewModal({ isOpen, onClose, url, onMouseLeave }: PreviewModalProps) {
-  if (!isOpen) return null;
-
-  return (
-    <div 
-      data-preview-window
-      onMouseLeave={onMouseLeave}
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-300 ease-in-out opacity-0 data-[show=true]:opacity-100" 
-      data-show={isOpen}
-      style={{ 
-        opacity: isOpen ? 1 : 0,
-        visibility: isOpen ? 'visible' : 'hidden',
-        transition: 'opacity 300ms ease-in-out, visibility 300ms ease-in-out'
-      }}
-    >
-      <div className="bg-white rounded-lg w-[600px] h-[400px] shadow-2xl relative border border-gray-200">
-        <div className="absolute top-0 left-0 right-0 bg-gray-100 px-2 py-1 rounded-t-lg flex items-center">
-          <span className="text-sm text-gray-600 truncate flex-1">{url}</span>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ✕
-          </button>
-        </div>
-        <iframe 
-          src={url} 
-          className="w-full h-full pt-7 rounded-b-lg"
-          title="Preview"
-        />
-      </div>
-    </div>
-  );
-}
+import { PreviewModal } from '@/components/PreviewModal';
 
 export default function Home() {
   const { sites } = useSites();
@@ -113,7 +72,7 @@ export default function Home() {
             <div className="space-y-4">
               <details className="border-b border-gray-300 pb-4">
                 <summary className="cursor-pointer text-lg font-medium">What do you mean H-index on everything?</summary>
-                <p className="mt-2 text-gray-600">So basically H-index is a interesting metric that measures impact for researchers in academics. Like if someone came up with a one hit wonder, they'd have an H index of 1, in order to have a higher H index you have to have a continued string of useful stuff. It seemed like an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc.  </p>
+                <p className="mt-2 text-gray-600">H-index is an interesting metric that measures impact for researchers in academics. If someone came up with one brilliant thing that's cited by millions, they'd still only have an H index of 1, in order to have a higher H index you have to have a continued string of useful stuff. It's an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc.  </p>
               </details>
               <details className="border-b border-gray-300 pb-4">
                 <summary className="cursor-pointer text-lg font-medium">Why did you make this?</summary>

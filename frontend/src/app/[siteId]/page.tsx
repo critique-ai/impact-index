@@ -6,10 +6,11 @@ import {  getTopResponse } from '@/lib/utils';
 import { notFound, useParams } from 'next/navigation';
 import { motion } from "motion/react";
 import { useSites } from '@/components/SitesProvider';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import type { Site, TopResponse } from '@/types';
 import { Loader2 } from 'lucide-react';
 import { toWords } from 'number-to-words';
+import { PreviewModal } from '@/components/PreviewModal';
 
 export default function SitePage() {
   const params = useParams();
@@ -22,6 +23,9 @@ export default function SitePage() {
   const [perPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNoResults, setShowNoResults] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const hoverTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (!searchTerm) {
@@ -48,6 +52,25 @@ export default function SitePage() {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
+  };
+
+  const handleMouseEnter = (url: string) => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setPreviewUrl(url);
+      setIsPreviewOpen(true);
+    }, 500);
+  };
+
+  const handleMouseLeave = (e: React.MouseEvent) => {
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget?.closest('[data-preview-window]')) {
+      return;
+    }
+
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setIsPreviewOpen(false);
   };
 
   return currentSite ? (
@@ -163,7 +186,7 @@ export default function SitePage() {
                   href={`/${params.siteId}/${searchTerm}`}
                   className="text-blue-600 hover:text-blue-800 underline mt-2 inline-block"
                 >
-                  Try indexing this {currentSite.entity_name.toLowerCase()}
+                  Try indexing {searchTerm}
                 </a>
               </div>
             )}
@@ -184,11 +207,20 @@ export default function SitePage() {
                 totalPages={data?.pagination?.total_pages ?? 1}
                 onPageChange={handlePageChange}
                 resultsPerPage={perPage}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               />
             )}
           </div>
         </motion.div>
       </div>
+
+      <PreviewModal 
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        url={previewUrl}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   ) : notFound();
 }
