@@ -6,7 +6,7 @@ from typing import Dict, Type
 from sites import SiteWorker
 from sites.types import RequestEntity, SupportedSites
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Body, Path
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -87,6 +87,26 @@ async def top_entities_for_site(site: SupportedSites, page: int, per_page: int):
             "total_items": total_count,
             "total_pages": total_pages
         }
+    }, status_code=200)
+
+
+@app.get("/{site}/search/{query}")
+@limiter.limit("100/minute")
+async def search_entities_for_site(request: Request, site: SupportedSites = Path(...), query: str = Path(...)):
+    if site.value not in state['site_workers'].keys():
+        return JSONResponse(content={"error": "Site not supported"}, status_code=400)
+    
+    entities = state['site_workers'][site.value].search_entities(query, limit=10)
+    
+    return JSONResponse(content={
+        "suggestions": [
+            {
+                "identifier": entity.identifier,
+                "index": entity.index,
+                "url": entity.url
+            } 
+            for entity in entities
+        ]
     }, status_code=200)
 
 @app.get("/supported-sites")

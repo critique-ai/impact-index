@@ -296,4 +296,15 @@ class SiteWorker(ABC):
                 # Sleep briefly after an error before retrying
                 time.sleep(1)
 
-    
+    def search_entities(self, query: str, limit: int = 10):
+        with Session(engine) as session:
+            # Create a search pattern with wildcards
+            search_pattern = f"%{query}%"
+            
+            # Get top matching results
+            entities = session.query(self.EntityModel)\
+                .filter(self.EntityModel.identifier.ilike(search_pattern))\
+                .order_by(self.EntityModel.index.desc())\
+                .limit(limit)\
+                .all()
+            return entities
