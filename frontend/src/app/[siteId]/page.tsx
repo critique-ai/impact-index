@@ -174,7 +174,7 @@ export default function SitePage() {
           <div className="flex flex-col items-center mb-12">
             <SearchBar
               siteId={params.siteId as string}
-              placeholder={`Search for a ${currentSite.entity_name.toLowerCase()}...`}
+              placeholder={`Search for ${currentSite.entity_name.toLowerCase()}...`}
               onSearch={setSearchTerm}
             />
             {showNoResults && (

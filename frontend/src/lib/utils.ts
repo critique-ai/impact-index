@@ -59,3 +59,24 @@ export const getProfileResponse = (siteId: string, accountId: string): Promise<P
     return data.response ?? {entity: null, stats: null};
   });
 };
+
+export const getSearchSuggestions = async (siteId: string, query: string) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${siteId}/search/${query}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      return { suggestions: [] };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+    return { suggestions: [] };
+  }
+};

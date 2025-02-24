@@ -118,6 +118,7 @@ export function DataTable({
             <Link
               key={entry.identifier}
               href={entry.url}
+              target="_blank"
               className="group block"
             >
               {content}

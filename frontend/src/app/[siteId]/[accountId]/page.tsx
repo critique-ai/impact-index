@@ -56,7 +56,7 @@ export default function ProfilePage() {
               id="stats" 
               className="scroll-mt-32 py-16 border-t border-gray-200"
             >
-              <h2 className="text-2xl font-bold mb-8">Statistics</h2>
+              <h2 className="text-2xl font-bold mb-8"> {data.entity.identifier}'s numbers</h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 <StatsCard
                   label="H-Index"
