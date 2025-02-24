@@ -52,29 +52,35 @@ export default function ProfilePage() {
               <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
             </div>
           ) : data?.entity ? (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-8">
-              <StatsCard
-                label="H-Index"
-                value={data?.entity.index}
-                icon={Award}
-                iconColor="text-yellow-500"
-              delay={0.1}
-            />
-            <StatsCard
-              label={`Total ${currentSite.metric_name}`}
-              value={data?.entity.total_metrics}
-              icon={BarChart3}
-              iconColor="text-blue-500"
-              delay={0.2}
-            />
-            <StatsCard
-              label="Percentile"
-              value={data?.stats.percentile}
-              icon={Calendar}
-              iconColor="text-green-500"
-                delay={0.3}
-              />
-            </div>
+            <section 
+              id="stats" 
+              className="scroll-mt-32 py-16 border-t border-gray-200"
+            >
+              <h2 className="text-2xl font-bold mb-8">Statistics</h2>
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <StatsCard
+                  label="H-Index"
+                  value={data?.entity.index}
+                  icon={Award}
+                  iconColor="text-yellow-500"
+                  delay={0.1}
+                />
+                <StatsCard
+                  label={`Total ${currentSite.metric_name}`}
+                  value={data?.entity.total_metrics}
+                  icon={BarChart3}
+                  iconColor="text-blue-500"
+                  delay={0.2}
+                />
+                <StatsCard
+                  label="Percentile"
+                  value={data?.stats.percentile}
+                  icon={Calendar}
+                  iconColor="text-green-500"
+                  delay={0.3}
+                />
+              </div>
+            </section>
           ) : notFound()}
         </motion.div>
       </div>

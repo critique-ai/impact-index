@@ -85,41 +85,47 @@ export function DataTable({
 
         {/* Data Rows */}
         {sortedData.map((entry, index) => {
-          // Calculate the actual rank considering the page number
           const actualRank = (currentPage - 1) * resultsPerPage + (index + 1);
-          const profileUrl = `/${siteId}/${entry.identifier}`;
           
-          return (
+          const content = (
+            <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 transition-colors items-center">
+              <div className="w-12 text-2xl font-bold text-gray-500">
+                #{actualRank}
+              </div>
+              <div className="min-w-0">
+                <h3 
+                  className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate cursor-help"
+                  onMouseEnter={() => onMouseEnter(`/${siteId}/${entry.identifier}#stats`)}
+                  onMouseLeave={onMouseLeave}
+                >
+                  {entry.identifier}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2 justify-end">
+                <span className="font-semibold">{entry.index}</span>
+                <Award className="h-5 w-5 text-yellow-500" />
+              </div>
+              <div className="flex items-center gap-2 justify-end">
+                <span className="font-semibold">
+                  {entry.total_metrics.toLocaleString()} {metricName}
+                </span>
+                <TrendingUp className="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+          );
+
+          return entry.url ? (
             <Link
               key={entry.identifier}
-              href={profileUrl}
+              href={entry.url}
               className="group block"
             >
-              <div className="grid grid-cols-4 gap-4 p-4 hover:bg-gray-700/50 transition-colors items-center">
-                <div className="w-12 text-2xl font-bold text-gray-500">
-                  #{actualRank}
-                </div>
-                <div className="min-w-0">
-                  <h3 
-                    className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate cursor-help"
-                    onMouseEnter={() => onMouseEnter(profileUrl)}
-                    onMouseLeave={onMouseLeave}
-                  >
-                    {entry.identifier}
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2 justify-end">
-                  <span className="font-semibold">{entry.index}</span>
-                  <Award className="h-5 w-5 text-yellow-500" />
-                </div>
-                <div className="flex items-center gap-2 justify-end">
-                  <span className="font-semibold">
-                    {entry.total_metrics.toLocaleString()} {metricName}
-                  </span>
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-              </div>
+              {content}
             </Link>
+          ) : (
+            <div key={entry.identifier} className="group">
+              {content}
+            </div>
           );
         })}
       </div>

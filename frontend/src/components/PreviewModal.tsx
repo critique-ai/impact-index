@@ -8,6 +8,7 @@ interface PreviewModalProps {
   export function PreviewModal({ isOpen, onClose, url, onMouseLeave }: PreviewModalProps) {
     if (!isOpen) return null;
   
+  
     return (
       <div 
         data-preview-window
@@ -30,11 +31,13 @@ interface PreviewModalProps {
               ✕
             </button>
           </div>
-          <iframe 
-            src={url} 
-            className="w-full h-full pt-7 rounded-b-lg"
-            title="Preview"
-          />
+          {
+            <iframe 
+              src={url} 
+              className="w-full h-full pt-7 rounded-b-lg"
+              title="Preview"
+            />
+          }
         </div>
       </div>
     );
