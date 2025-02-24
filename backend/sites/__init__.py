@@ -174,19 +174,20 @@ class SiteWorker(ABC):
             data = metadata
         if not data: return None 
         data = data.to_dict()
-        try:
-            url = "https://api.critique-labs.ai/v1/published-service/active-entity-count"
-            request_data = { "site": self.name, "metric": f"total {self.metric_name}" }
-            headers = {
-                'Content-Type': 'application/json',
-                'X-API-Key': os.getenv('CRITIQUE_API_KEY')
-            }
-            response = requests.post(url, headers=headers, json=request_data)
-            values = response.json()
-            data['target_entities'] = values['response']['result']
-        except Exception as e:
-            print(f"Error getting metadata for {self.name}: {e}")
-            data['target_entities'] = -1
+        # try:
+        #     url = "https://api.critique-labs.ai/v1/published-service/active-entity-count"
+        #     request_data = { "site": self.name, "metric": f"total {self.metric_name}" }
+        #     headers = {
+        #         'Content-Type': 'application/json',
+        #         'X-API-Key': os.getenv('CRITIQUE_API_KEY')
+        #     }
+        #     response = requests.post(url, headers=headers, json=request_data)
+        #     values = response.json()
+        #     data['target_entities'] = values['response']['result']
+        # except Exception as e:
+        #     print(f"Error getting metadata for {self.name}: {e}")
+        #     data['target_entities'] = -1
+        data['target_entities'] = -1
         return data 
     
     def get_top_entities(self, page: int = 1, per_page: int = 10):
