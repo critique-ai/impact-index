@@ -130,6 +130,8 @@ class SiteWorker(ABC):
         updated_entity = None
         try:
             entity_info = self.entity_info(entity)
+            if not entity_info:
+                return None 
             index, total = self.calculate_h_index(entity_info.records)
             with Session(engine, expire_on_commit=False) as session:
                 updated_entity = self.update_entity(entity_info,session=session,index=index,total_metrics=total)

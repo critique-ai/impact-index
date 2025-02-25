@@ -13,7 +13,7 @@ class Reddit(SiteWorker):
     index_description = 'A user has an H-index of N if they have exactly N posts or comments with at least N upvotes each'
     entity_name = 'Users'
     metric_name = 'upvotes'
-    primary_color = 'bg-red-500'
+    primary_color = 'red'
     secondary_color = 'black'
     
     def __init__(self):

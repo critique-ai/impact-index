@@ -13,7 +13,7 @@ class Github(SiteWorker):
     index_description = 'A user has an H-index of N if they have exactly N repos with at least N stars'
     entity_name = 'Accounts'
     metric_name = 'stars'
-    primary_color = 'bg-gray-500'
+    primary_color = 'gray'
     secondary_color = 'black'
     
     def __init__(self):

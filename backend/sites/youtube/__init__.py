@@ -11,8 +11,8 @@ class Youtube(SiteWorker):
     index_description = "A channel has an H-index of N if they have exactly N videos with at least N million views each"
     entity_name = "Channels"
     metric_name = "Million views"
-    primary_color = "bg-red-500"
-    secondary_color = "white"
+    primary_color = "white"
+    secondary_color = "red"
     def __init__(self):
         super().__init__()
         self.client = build('youtube', 'v3', developerKey=os.getenv('YOUTUBE_API_KEY'))
@@ -61,6 +61,7 @@ class Youtube(SiteWorker):
         except Exception as e:
             print(f"Error fetching channel details: {e}")
             raise Exception(f"Error fetching channel details: {e}")
+            return None 
         return EntityInfo(records=records, metadata=metadata)
 
     def get_related_entities(self, entity: RequestEntity) -> List[RequestEntity]:
