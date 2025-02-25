@@ -142,7 +142,7 @@ export default function SitePage() {
                   <ChartContainer config={histConfig}>
                     <BarChart
                       data={formatHistogramData(currentSite.histogram)}
-                      margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+                      margin={{ top: 20, right: 10, left: 10, bottom: 30 }}
                     >
                       <CartesianGrid vertical={false} />
                       <XAxis
