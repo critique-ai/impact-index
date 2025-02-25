@@ -30,7 +30,7 @@ export default function Home() {
 
   const chartConfig = {
     entities: {
-      label: "records",
+      label: "indexed so far: ",
     },
   } satisfies ChartConfig
 
@@ -99,7 +99,7 @@ export default function Home() {
                 fill: `url(#gradient-${site.name})` // Use the gradient
               }))}
               startAngle={-90}
-              endAngle={380}
+              endAngle={350}
               innerRadius={30}
               outerRadius={110}
             >
