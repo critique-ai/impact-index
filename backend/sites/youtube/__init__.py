@@ -4,6 +4,7 @@ from typing import List
 from googleapiclient.discovery import build
 import os
 from datetime import datetime
+import time
 class Youtube(SiteWorker):
     name = "youtube"
     description = "Youtube channel H-index based on views"
@@ -63,40 +64,38 @@ class Youtube(SiteWorker):
         return EntityInfo(records=records, metadata=metadata)
 
     def get_related_entities(self, entity: RequestEntity) -> List[RequestEntity]:
-        #using featured channels for a given channel
+        # using topic categories to find related channels
         entities = [] 
         try:
             channel_response = self.client.channels().list(
                 forHandle=entity.identifier,
-                part='id,contentDetails'
+                part='topicDetails'
             ).execute()
         
             if not channel_response['items']:
                 return entities
             
-            channel_id = channel_response['items'][0]['id']
-            playlists_response = self.client.playlists().list(
-                part='id',
-                channelId=channel_id,
-                maxResults=50
-            ).execute()
-
-            for playlist in playlists_response.get('items', []):
-                playlist_items = self.client.playlistItems().list(
-                    part='snippet,contentDetails',
-                    playlistId=playlist['id'],
-                    maxResults=50
+            topics = channel_response['items'][0]['topicDetails']['topicCategories']
+            if len(topics) > 0:
+                topic = topics[0]
+                # search for channels by topic 
+                search_response = self.client.search().list(
+                    q=topic,
+                    part='id,snippet',
+                    type='channel',
+                    maxResults=10
                 ).execute()
 
-                for item in playlist_items.get('items', []):
-                    channel_details = self.client.channels().list(
-                        id=item['snippet']['channelId'],
-                        part='snippet'
+                channel_ids = [item['id']['channelId'] for item in search_response['items']]
+                for channel_id in channel_ids:
+                    time.sleep(1) # for rate limiting
+                    channel_response = self.client.channels().list(
+                        id=channel_id,
+                        part='id,snippet,contentDetails'
                     ).execute()
-                    if channel_details['items']:
-                        custom_url = channel_details['items'][0]['snippet'].get('customUrl')
+                    if channel_response['items']:
+                        custom_url = channel_response['items'][0]['snippet'].get('customUrl')
                         if custom_url:
-                            # Remove '@' prefix if present
                             handle = custom_url.lstrip('@')
                             entities.append(RequestEntity(type=self.name, identifier=handle))
 
@@ -106,4 +105,4 @@ class Youtube(SiteWorker):
 
 if __name__ == "__main__":
     youtube = Youtube()
-    print(youtube.get_related_entities(RequestEntity(type="youtube", identifier="UC-9-kyTWobZ36ZUkB3rDt9Q")))
+    print(youtube.get_related_entities(RequestEntity(type="youtube", identifier="LowLevelTV")))

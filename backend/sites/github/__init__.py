@@ -11,7 +11,7 @@ class Github(SiteWorker):
     name = "github"
     description = 'Github user H-index based on number of followers'
     index_description = 'A user has an H-index of N if they have exactly N repos with at least N stars'
-    entity_name = 'Users'
+    entity_name = 'Accounts'
     metric_name = 'stars'
     primary_color = 'bg-gray-500'
     secondary_color = 'black'

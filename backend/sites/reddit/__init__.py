@@ -40,8 +40,7 @@ class Reddit(SiteWorker):
         related_entities = []
         try:
             user = self.reddit_client.redditor(entity.identifier)
-            comments = user.comments.new(limit=None)
-            posts = user.submissions.top(limit=None)
+            comments = user.comments.new(limit=10)
             for comment in comments:
                 #get the post that this comment is on 
                 post = comment.submission
