@@ -121,15 +121,15 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
             )}
             
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto z-50">
+              <div className="absolute w-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50">
                 {suggestions.map((suggestion, index) => (
                   <div
                     key={suggestion.identifier + index}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => handleSuggestionClick(suggestion)}
                   >
-                    <div className="font-medium">{suggestion.identifier}</div>
-                    <div className="text-sm text-gray-500 truncate">{suggestion.url}</div>
+                    <div className="font-medium dark:text-white">{suggestion.identifier}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{suggestion.url}</div>
                   </div>
                 ))}
               </div>

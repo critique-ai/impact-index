@@ -12,24 +12,48 @@ import { useState, useEffect } from 'react';
 import type { ProfileResponse } from '@/types';
 import { Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-
+import { useTheme  } from 'next-themes';
 export default function ProfilePage() {
   const params = useParams();
   const accountId = params?.accountId as string;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ProfileResponse | null>(null);
-
+  const { theme, setTheme } = useTheme();
   const { sites } = useSites();
   const currentSite = sites.find((site) => site.name === params?.siteId);
   if (!currentSite) notFound();
 
   useEffect(() => {
+    // Handle theme from query parameter, checking both current window and parent if in iframe
+    const getSearchParams = () => {
+      const currentParams = window.location.search;
+      if (currentParams) return currentParams;
+      
+      try {
+        // Check if we're in an iframe and try to get parent's search params
+        if (window.parent && window.parent !== window) {
+          return window.parent.location.search;
+        }
+      } catch (e) {
+        // Catching security errors that might occur when accessing parent
+        console.log('Unable to access parent window params');
+      }
+      return '';
+    };
+
+    const searchParams = getSearchParams();
+    if (searchParams.includes('theme=dark')) {
+      setTheme('dark');
+    } else if (searchParams.includes('theme=light')) {
+      setTheme('light');
+    }
+
     const response = getProfileResponse(currentSite.name, accountId);
     response.then((data) => {
       setData(data);
       setLoading(false);
     });
-  }, [currentSite.name, accountId]);
+  }, [currentSite.name, accountId, setTheme]);
 
   return (
     <div className="min-h-screen">

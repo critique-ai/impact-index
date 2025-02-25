@@ -11,6 +11,7 @@ import type { Site, TopResponse } from '@/types';
 import { Loader2 } from 'lucide-react';
 import { toWords } from 'number-to-words';
 import { PreviewModal } from '@/components/PreviewModal';
+import { useTheme } from 'next-themes';
 
 export default function SitePage() {
   const params = useParams();
@@ -26,6 +27,7 @@ export default function SitePage() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!searchTerm) {
@@ -56,14 +58,15 @@ export default function SitePage() {
 
   const handleMouseEnter = (url: string) => {
     hoverTimeoutRef.current = setTimeout(() => {
-      setPreviewUrl(url);
+      const previewUrlWithTheme = `${url}${url.includes('?') ? '&' : '?'}theme=${theme || 'light'}`;
+      setPreviewUrl(previewUrlWithTheme);
       setIsPreviewOpen(true);
     }, 500);
   };
 
   const handleMouseLeave = (e: React.MouseEvent) => {
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (relatedTarget?.closest('[data-preview-window]')) {
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
+    if (relatedTarget?.closest?.('[data-preview-window]')) {
       return;
     }
 
