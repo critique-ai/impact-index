@@ -129,7 +129,10 @@ async def supported_sites():
             site_info['index_stddev'] = metadata['index_stddev']
             site_info['index_min'] = metadata['index_min']
             site_info['index_max'] = metadata['index_max']
+            site_info['index_1q'] = metadata['1q']
+            site_info['index_3q'] = metadata['3q']
             site_info['current_entities'] = metadata['current_entities']
             site_info['target_entities'] = metadata['target_entities']
+            site_info['histogram'] = metadata['histogram']
         sites.append(site_info)
     return JSONResponse(content={"response": sites}, status_code=200)

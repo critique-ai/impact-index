@@ -11,8 +11,8 @@ class Youtube(SiteWorker):
     index_description = "A channel has an H-index of N if they have exactly N videos with at least N million views each"
     entity_name = "Channels"
     metric_name = "Million views"
-    primary_color = "white"
-    secondary_color = "red"
+    primary_color = "red"
+    secondary_color = "gray"
     def __init__(self):
         super().__init__()
         self.client = build('youtube', 'v3', developerKey=os.getenv('YOUTUBE_API_KEY'))

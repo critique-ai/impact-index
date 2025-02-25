@@ -105,7 +105,13 @@ export default function Home() {
             >
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent hideLabel nameKey="name" />}
+                content={
+                  <ChartTooltipContent 
+                    hideLabel 
+                    nameKey="name" 
+                    className="bg-white dark:bg-gray-800 p-2 shadow-lg border border-gray-200 dark:border-gray-700"
+                  />
+                }
               />
               <RadialBar dataKey="entities" background>
                 <LabelList
@@ -134,7 +140,7 @@ export default function Home() {
           <div className="space-y-4">
             <details className="border-b border-gray-300 pb-4">
               <summary className="cursor-pointer text-lg font-medium">What do you mean H-index on everything?</summary>
-              <p className="mt-2 text-gray-600">H-index is an interesting metric that measures impact for researchers in academics. If someone came up with one brilliant thing that's cited by millions, they'd still only have an H index of 1. In order to have a higher H index you have to have a continued string of useful stuff. It's an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc.  </p>
+              <p className="mt-2 text-gray-600">H-index is an interesting metric that measures impact for researchers in academics. If someone came up with one brilliant thing that's cited by millions, they'd still only have an H index of 1. In order to have a higher H index you have to have a continued string of useful stuff. It's an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc. New sites will be added sporadically, if you feel like contributing check out the github link above.  </p>
             </details>
             <details className="border-b border-gray-300 pb-4">
               <summary className="cursor-pointer text-lg font-medium">Why did you make this?</summary>

@@ -13,6 +13,14 @@ export interface Site {
   index_max?: number;
   target_entities?: number;
   current_entities?: number;
+  index_1q?: number;
+  index_3q?: number;
+  histogram?: {
+    bucket_start: number;
+    bucket_end: number;
+    count: number;
+    percentage: number;
+  }[];
 }
 
 export interface Entity {

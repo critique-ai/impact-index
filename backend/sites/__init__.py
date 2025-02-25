@@ -174,23 +174,44 @@ class SiteWorker(ABC):
         with Session(engine, expire_on_commit=False) as session:
             metadata = session.query(AggregatedMetrics).filter(AggregatedMetrics.sites == self.name).first()
             data = metadata
-        if not data: return None 
-        data = data.to_dict()
-        # try:
-        #     url = "https://api.critique-labs.ai/v1/published-service/active-entity-count"
-        #     request_data = { "site": self.name, "metric": f"total {self.metric_name}" }
-        #     headers = {
-        #         'Content-Type': 'application/json',
-        #         'X-API-Key': os.getenv('CRITIQUE_API_KEY')
-        #     }
-        #     response = requests.post(url, headers=headers, json=request_data)
-        #     values = response.json()
-        #     data['target_entities'] = values['response']['result']
-        # except Exception as e:
-        #     print(f"Error getting metadata for {self.name}: {e}")
-        #     data['target_entities'] = -1
-        data['target_entities'] = -1
-        return data 
+            
+            if not data: 
+                return None
+                
+            data = data.to_dict()
+            data['target_entities'] = -1 # TODO: bring back implementation of this
+            data["1q"] = data["index_median"] - 0.67*data["index_stddev"] #assuming normal distribution here, meh its fine. 
+            data["3q"] = data["index_median"] + 0.67*data["index_stddev"]
+            # Calculate histogram data
+            # First get min and max index values
+            min_index = session.query(func.min(self.EntityModel.index)).scalar() or 0
+            max_index = session.query(func.max(self.EntityModel.index)).scalar() or 0
+            
+            # Create 10 buckets
+            bucket_size = (max_index - min_index) / 10 if max_index > min_index else 1
+            total_count = session.query(self.EntityModel).count()
+            
+            histogram_data = []
+            for i in range(10):
+                bucket_start = min_index + (i * bucket_size)
+                bucket_end = min_index + ((i + 1) * bucket_size)
+                
+                # Count entities in this bucket
+                count = session.query(self.EntityModel).filter(
+                    self.EntityModel.index >= bucket_start,
+                    self.EntityModel.index < (bucket_end if i < 9 else bucket_end + 0.1)  # Include max value in last bucket
+                ).count()
+                
+                histogram_data.append({
+                    "bucket_start": round(bucket_start, 2),
+                    "bucket_end": round(bucket_end, 2),
+                    "count": count,
+                    "percentage": round((count*100/ total_count) if total_count > 0 else 0, 2)
+                })
+            
+            data['histogram'] = histogram_data
+            
+            return data
     
     def get_top_entities(self, page: int = 1, per_page: int = 10):
         """

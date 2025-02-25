@@ -12,6 +12,10 @@ import { Loader2 } from 'lucide-react';
 import { toWords } from 'number-to-words';
 import { PreviewModal } from '@/components/PreviewModal';
 import { useTheme } from 'next-themes';
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
+import { Card, CardContent } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BoxPlotChart } from '@/components/BoxPlot';
 
 export default function SitePage() {
   const params = useParams();
@@ -28,6 +32,14 @@ export default function SitePage() {
   const [previewUrl, setPreviewUrl] = useState('');
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
   const { theme } = useTheme();
+
+
+  const histConfig = {
+    perc: {
+      label: "Percentage",
+      color: currentSite?.primary_color || "#3b82f6",
+    },
+  } satisfies ChartConfig
 
   useEffect(() => {
     if (!searchTerm) {
@@ -76,6 +88,34 @@ export default function SitePage() {
     setIsPreviewOpen(false);
   };
 
+  const formatHistogramData = (histogram?: Site['histogram']) => {
+    if (!histogram) return [];
+    return histogram.map(bucket => ({
+      range: `${bucket.bucket_start.toFixed(0)}-${bucket.bucket_end.toFixed(0)}`,
+      count: bucket.count,
+      perc: bucket.percentage
+    }));
+  };
+
+  const formatBoxPlotData = (histogram?: Site['histogram']) => {
+    if (!histogram) return [];
+    
+    // You'll need to adjust this based on your actual data structure
+    return [{
+      x: "Distribution",
+      min: Math.min(...histogram.map(h => h.bucket_start)),
+      max: Math.max(...histogram.map(h => h.bucket_end)),
+      median: histogram.reduce((acc, h) => acc + h.bucket_start + h.bucket_end, 0) / (2 * histogram.length),
+      firstQuartile: histogram[Math.floor(histogram.length * 0.25)].bucket_start,
+      thirdQuartile: histogram[Math.floor(histogram.length * 0.75)].bucket_end,
+      outliers: [],
+      binData: histogram.map(h => ({
+        value: (h.bucket_start + h.bucket_end) / 2,
+        count: h.count
+      }))
+    }];
+  };
+
   return currentSite ? (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-16">
@@ -84,95 +124,72 @@ export default function SitePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex flex-col md:flex-row justify-center items-center gap-8 mb-4">
-            <h1 className="text-4xl font-bold text-center">
+          <div className="mb-8 flex justify-center">
+            <h1 className="text-4xl font-bold">
               {currentSite.name} rankings
             </h1>
-            
-            {currentSite.current_entities != null && (
-              <div className="flex justify-center items-center gap-4">
-                <div className="relative w-24 h-24">
-                  {currentSite.target_entities != null && currentSite.target_entities >0 ? (
-                    <>
-                      <svg className="w-full h-full transform -rotate-90">
-                        <circle
-                          cx="48"
-                          cy="48"
-                          r="45"
-                          className="stroke-gray-200"
-                          strokeWidth="6"
-                          fill="none"
-                        />
-                        <motion.circle
-                          cx="48"
-                          cy="48"
-                          r="45"
-                          className="stroke-blue-500"
-                          strokeWidth="6"
-                          fill="none"
-                          strokeLinecap="round"
-                          initial={{ pathLength: 0 }}
-                          animate={{ 
-                            pathLength: currentSite.current_entities / currentSite.target_entities 
-                          }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                          style={{
-                            strokeDasharray: "283",
-                            strokeDashoffset: "283",
-                          }}
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-sm font-medium">
-                          {Math.round((currentSite.current_entities / currentSite.target_entities) * 100)}%
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-center"
-                      >
-                        <span className="text-2xl font-bold text-blue-500">
-                          {toWords(currentSite.current_entities)}
-                        </span>
-                      </motion.div>
-                    </div>
-                  )}
-                </div>
-                <div className="text-sm text-gray-600">
-                  {currentSite.target_entities != null && currentSite.target_entities > 0 ? (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <span className="font-medium">{toWords(currentSite.current_entities)}</span>
-                      {' '}{currentSite.entity_name.toLowerCase()} indexed
-                      <br />
-                      out of supposedly{' '}
-                      <span className="font-medium">{toWords(currentSite.target_entities)}</span>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      {currentSite.entity_name.toLowerCase()} indexed
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
-
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto text-lg">
             {currentSite.index_description}
           </p>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-4">
+            {/* Histogram Column */}
+            {currentSite.histogram && (
+              <>
+                <div className="md:col-span-6">
+                  <ChartContainer config={histConfig}>
+                    <BarChart
+                      data={formatHistogramData(currentSite.histogram)}
+                      margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="range"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                        tick={{stroke: "currentColor", fontSize: 12}}
+                        label={{ 
+                          value: 'Index Range', 
+                          position: 'bottom',
+                          offset: 10,
+                          className: "text-muted-foreground"
+                        }}
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent />}
+                      />
+                      <Bar
+                        dataKey="count"
+                        fill={currentSite.primary_color || "#3b82f6"}
+                        radius={[4, 4, 0, 0]}
+                      >
+                        <LabelList
+                          dataKey="perc"
+                          position="top"
+                          formatter={(value: number) => `${value.toFixed(1)}%`}
+                          fill="currentColor"
+                          fontSize={12}
+                        />
+                      </Bar>
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+                <div className="md:col-span-6">
+                      <BoxPlotChart
+                        width={400}
+                        height={300}
+                        data={formatBoxPlotData(currentSite.histogram)}
+                        color={currentSite.primary_color || "#3b82f6"}
+                      />
+                </div>
+              </>
+            )}
+          </div>
+
 
           <div className="flex flex-col items-center mb-12">
             <SearchBar
