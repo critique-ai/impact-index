@@ -21,12 +21,12 @@ interface PreviewModalProps {
           transition: 'opacity 300ms ease-in-out, visibility 300ms ease-in-out'
         }}
       >
-        <div className="bg-white rounded-lg w-[600px] h-[400px] shadow-2xl relative border border-gray-200">
+        <div className="bg-white rounded-lg w-[95vw] md:w-[600px] h-[300px] md:h-[400px] shadow-2xl relative border border-gray-200">
           <div className="absolute top-0 left-0 right-0 bg-gray-100 px-2 py-1 rounded-t-lg flex items-center">
             <span className="text-sm text-gray-600 truncate flex-1">{url}</span>
             <button 
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 p-2"
             >
               ✕
             </button>
