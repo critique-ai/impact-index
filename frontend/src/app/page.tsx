@@ -21,6 +21,7 @@ export default function Home() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>();
 
   const chartData = sites.map(site => ({
     name: site.name,
@@ -34,15 +35,16 @@ export default function Home() {
     },
   } satisfies ChartConfig
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    const position = { x: e.clientX, y: e.clientY };
+    setMousePosition(position);
     hoverTimeoutRef.current = setTimeout(() => {
       setPreviewUrl('https://en.wikipedia.org/wiki/H-index#Calculation');
       setIsPreviewOpen(true);
-    }, 500); // basically 0 second delay
+    }, 500);
   };
 
   const handleMouseLeave = (e: React.MouseEvent) => {
-    // Check if we're moving to the preview window
     const relatedTarget = e.relatedTarget as HTMLElement;
     if (relatedTarget?.closest('[data-preview-window]')) {
       return;
@@ -57,17 +59,6 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center text-center">
-        <svg style={{ height: 0 }}>
-          {sites.map((site, index) => (
-            <defs key={site.name}>
-              <linearGradient id={`gradient-${site.name}`}>
-                <stop offset="0%" stopColor={site.primary_color} />
-                <stop offset="100%" stopColor={site.secondary_color} />
-              </linearGradient>
-            </defs>
-          ))}
-        </svg>
-
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-4xl font-bold tracking-tighter md:text-5xl lg:text-7xl">
             The Impact index of
@@ -96,7 +87,7 @@ export default function Home() {
               data={sites.map(site => ({
                 name: site.name,
                 entities: site.current_entities,
-                fill: `url(#gradient-${site.name})` // Use the gradient
+                fill: site.primary_color // Use the primary color directly
               }))}
               startAngle={-90}
               endAngle={350}
@@ -140,7 +131,7 @@ export default function Home() {
           <div className="space-y-4">
             <details className="border-b border-gray-300 pb-4">
               <summary className="cursor-pointer text-lg font-medium">What do you mean H-index on everything?</summary>
-              <p className="mt-2 text-gray-600">H-index is an interesting metric that measures impact for researchers in academics. If someone came up with one brilliant thing that's cited by millions, they'd still only have an H index of 1. In order to have a higher H index you have to have a continued string of useful stuff. It's an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc. New sites will be added sporadically, if you feel like contributing check out the github link above.  </p>
+              <p className="mt-2 text-gray-600">H-index is an interesting metric that measures (a vector of ) impact for researchers in academics. If someone came up with one brilliant thing that's cited by millions, they'd still only have an H index of 1. In order to have a higher H index you have to have a continued string of useful stuff. It's an interesting exercise to apply that to various sites since the principle is quite generalizable. For example for reddit, it represents your impact with comments and posts for a given user, for Youtube it represents the impact of a channel with views over the given videos, etc. New sites will be added sporadically, if you feel like contributing check out the github link above.  </p>
             </details>
             <details className="border-b border-gray-300 pb-4">
               <summary className="cursor-pointer text-lg font-medium">Why did you make this?</summary>
@@ -159,6 +150,7 @@ export default function Home() {
         onClose={() => setIsPreviewOpen(false)}
         url={previewUrl}
         onMouseLeave={handleMouseLeave}
+        mousePosition={mousePosition}
       />
     </div>
   );

@@ -14,7 +14,7 @@ interface DataTableProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   resultsPerPage: number;
-  onMouseEnter: (url: string) => void;
+  onMouseEnter: (url: string, e: React.MouseEvent) => void;
   onMouseLeave: (e: React.MouseEvent) => void;
 }
 
@@ -95,7 +95,7 @@ export function DataTable({
               <div className="min-w-0">
                 <h3 
                   className="text-lg font-semibold group-hover:text-blue-400 transition-colors truncate cursor-help"
-                  onMouseEnter={() => onMouseEnter(`/${siteId}/${entry.identifier}#stats`)}
+                  onMouseEnter={(e) => onMouseEnter(`/${siteId}/${entry.identifier}#stats`, e)}
                   onMouseLeave={onMouseLeave}
                 >
                   {entry.identifier}
@@ -134,6 +134,13 @@ export function DataTable({
       {/* Pagination controls */}
       <div className="mt-4 flex justify-center gap-2">
         <button
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-200 disabled:opacity-50"
+        >
+          First
+        </button>
+        <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="px-4 py-2 bg-gray-200 disabled:opacity-50"
@@ -149,6 +156,13 @@ export function DataTable({
           className="px-4 py-2 bg-gray-200 disabled:opacity-50"
         >
           Next
+        </button>
+        <button
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-200 disabled:opacity-50"
+        >
+          Last
         </button>
       </div>
     </div>

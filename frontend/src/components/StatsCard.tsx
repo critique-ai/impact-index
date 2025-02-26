@@ -2,6 +2,7 @@
 
 import { LucideIcon } from 'lucide-react';
 import { motion } from "motion/react";
+import { ReactNode } from 'react';
 
 interface StatsCardProps {
   label: string;
@@ -9,9 +10,10 @@ interface StatsCardProps {
   icon: LucideIcon;
   iconColor: string;
   delay?: number;
+  children?: ReactNode;
 }
 
-export function StatsCard({ label, value, icon: Icon, iconColor, delay = 0 }: StatsCardProps) {
+export function StatsCard({ label, value, icon: Icon, iconColor, delay = 0, children }: StatsCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -26,6 +28,7 @@ export function StatsCard({ label, value, icon: Icon, iconColor, delay = 0 }: St
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
       </div>
+      {children}
     </motion.div>
   );
 } 

@@ -5,7 +5,7 @@ import { useSites } from '@/components/SitesProvider';
 import { useContext } from 'react';
 import { notFound } from 'next/navigation';
 import { motion } from "motion/react";
-import { Award, BarChart3, Calendar, ExternalLink } from 'lucide-react';
+import { Award, BarChart3, Calendar, ExternalLink, Users } from 'lucide-react';
 import Link from 'next/link';
 import { StatsCard } from '@/components/StatsCard';
 import { useState, useEffect } from 'react';
@@ -96,12 +96,45 @@ export default function ProfilePage() {
                   iconColor="text-blue-500"
                   delay={0.2}
                 />
+                <div className="relative group md:col-span-2 lg:col-span-1">
+                  <StatsCard
+                    label="Ranking"
+                    value={`Top ${Math.ceil(100 - (data?.stats.percentile || 0))}%`}
+                    icon={Users}
+                    iconColor="text-green-500"
+                    delay={0.3}
+                  >
+                    <div className="mt-4">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 h-4 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-out"
+                          style={{ 
+                            width: `${data?.stats.percentile || 0}%`,
+                            transform: `translateX(${-(100 - (data?.stats.percentile || 0))}%)`,
+                          }}
+                        />
+                      </div>
+                      <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                        This account has a higher index than {data?.stats.percentile}% of {currentSite.entity_name}.
+                        {data?.stats.percentile >= 99 && " That's exceptional! 🌟"}
+                        {data?.stats.percentile >= 90 && data?.stats.percentile < 99 && " That's outstanding! ⭐"}
+                      </p>
+                    </div>
+                  </StatsCard>
+                </div>
                 <StatsCard
-                  label="Percentile"
-                  value={data?.stats.percentile}
+                  label="Member Since"
+                  value={new Date(data?.entity.created_at).toLocaleDateString()}
                   icon={Calendar}
-                  iconColor="text-green-500"
-                  delay={0.3}
+                  iconColor="text-purple-500"
+                  delay={0.4}
+                />
+                <StatsCard
+                  label="Last Updated"
+                  value={new Date(data?.entity.last_updated_at).toLocaleDateString()}
+                  icon={Calendar}
+                  iconColor="text-orange-500"
+                  delay={0.5}
                 />
               </div>
             </section>

@@ -32,6 +32,7 @@ export default function SitePage() {
   const [previewUrl, setPreviewUrl] = useState('');
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
   const { theme } = useTheme();
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>();
 
 
   const histConfig = {
@@ -68,7 +69,8 @@ export default function SitePage() {
     setCurrentPage(newPage);
   };
 
-  const handleMouseEnter = (url: string) => {
+  const handleMouseEnter = (url: string, e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
     hoverTimeoutRef.current = setTimeout(() => {
       const previewUrlWithTheme = `${url}${url.includes('?') ? '&' : '?'}theme=${theme || 'light'}`;
       setPreviewUrl(previewUrlWithTheme);
@@ -240,6 +242,7 @@ export default function SitePage() {
         onClose={() => setIsPreviewOpen(false)}
         url={previewUrl}
         onMouseLeave={handleMouseLeave}
+        mousePosition={mousePosition}
       />
     </div>
   ) : notFound();

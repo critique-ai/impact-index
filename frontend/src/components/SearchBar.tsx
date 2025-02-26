@@ -26,6 +26,7 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
   const [showPreview, setShowPreview] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimeout = useRef<NodeJS.Timeout>();
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -63,10 +64,10 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
     setShowSuggestions(true);
   };
 
-  const handleSuggestionClick = (suggestion: Suggestion) => {
+  const handleSuggestionClick = (suggestion: Suggestion, e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
     setQuery(suggestion.identifier);
     setShowSuggestions(false);
-    // Show preview modal with the constructed URL
     setPreviewUrl(`/${siteId}/${suggestion.identifier}`);
     setShowPreview(true);
     if (onSuggestionSelect) {
@@ -126,7 +127,7 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
                   <div
                     key={suggestion.identifier + index}
                     className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                    onClick={() => handleSuggestionClick(suggestion)}
+                    onClick={(e) => handleSuggestionClick(suggestion, e)}
                   >
                     <div className="font-medium dark:text-white">{suggestion.identifier}</div>
                     <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{suggestion.url}</div>
@@ -143,6 +144,7 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
         onClose={handleClosePreview}
         url={previewUrl}
         onMouseLeave={handlePreviewMouseLeave}
+        mousePosition={mousePosition}
       />
     </>
   );
