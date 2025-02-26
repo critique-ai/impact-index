@@ -12,3 +12,5 @@ slowapi
 redis
 rq
 google-api-python-client
+spotipy
+huggingface_hub

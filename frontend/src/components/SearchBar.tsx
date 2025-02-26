@@ -27,6 +27,7 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimeout = useRef<NodeJS.Timeout>();
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,8 +46,13 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
       return;
     }
 
-    const { suggestions } = await getSearchSuggestions(siteId, searchQuery);
-    setSuggestions(suggestions);
+    setIsLoading(true);
+    try {
+      const { suggestions } = await getSearchSuggestions(siteId, searchQuery);
+      setSuggestions(suggestions);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,18 +127,27 @@ export function SearchBar({ siteId, placeholder, onSearch, onSuggestionSelect }:
               </button>
             )}
             
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && (isLoading || suggestions.length > 0) && (
               <div className="absolute w-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50">
-                {suggestions.map((suggestion, index) => (
-                  <div
-                    key={suggestion.identifier + index}
-                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                    onClick={(e) => handleSuggestionClick(suggestion, e)}
-                  >
-                    <div className="font-medium dark:text-white">{suggestion.identifier}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{suggestion.url}</div>
+                {isLoading ? (
+                  <div className="px-4 py-2 text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full" />
+                      <span> Loading suggestions...</span>
+                    </div>
                   </div>
-                ))}
+                ) : (
+                  suggestions.map((suggestion, index) => (
+                    <div
+                      key={suggestion.identifier + index}
+                      className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                      onClick={(e) => handleSuggestionClick(suggestion, e)}
+                    >
+                      <div className="font-medium dark:text-white">{suggestion.identifier}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{suggestion.url}</div>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
