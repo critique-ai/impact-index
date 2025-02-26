@@ -45,7 +45,7 @@ interface PreviewModalProps {
         top: `${top}px`,
         left: `${left}px`,
         transform: 'none',
-        pointerEvents: 'auto' // Ensure modal is interactive
+        pointerEvents: 'auto' as const // Type as const to match CSS property type
       };
     };
   
