@@ -180,8 +180,8 @@ class SiteWorker(ABC):
                 
             data = data.to_dict()
             data['target_entities'] = -1 # TODO: bring back implementation of this
-            data["1q"] = data["index_median"] - 0.67*data["index_stddev"] #assuming normal distribution here, meh its fine. 
-            data["3q"] = data["index_median"] + 0.67*data["index_stddev"]
+            data["1q"] = data["index_mean"] - 0.674*data["index_stddev"] #assuming normal distribution here, meh its fine. 
+            data["3q"] = data["index_mean"] + 0.674*data["index_stddev"]
             # Calculate histogram data
             # First get min and max index values
             min_index = session.query(func.min(self.EntityModel.index)).scalar() or 0
