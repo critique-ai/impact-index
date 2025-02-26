@@ -116,8 +116,6 @@ export default function ProfilePage() {
                       </div>
                       <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
                         This account has a higher index than {data?.stats.percentile}% of {currentSite.entity_name}.
-                        {data?.stats.percentile >= 99 && " That's exceptional! 🌟"}
-                        {data?.stats.percentile >= 90 && data?.stats.percentile < 99 && " That's outstanding! ⭐"}
                       </p>
                     </div>
                   </StatsCard>
